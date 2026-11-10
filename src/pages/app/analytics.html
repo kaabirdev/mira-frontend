@@ -1,0 +1,157 @@
+<!-- @title Analytics · Mira -->
+<!-- @desc Delivery performance, subscriber growth and daily usage. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="analytics" data-title="Analytics">
+<!-- @include partials/sprite.html -->
+<!-- @include partials/sidebar.html -->
+
+<div class="flex min-h-screen flex-col lg:pl-[264px]">
+  <!-- @include partials/topbar.html -->
+
+  <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-page space-y-5">
+
+      <div class="page-header">
+        <div>
+          <h1 class="text-[24px] font-semibold leading-tight tracking-[-0.03em]">Analytics</h1>
+          <p class="mt-1.5 text-[13.5px] text-muted">Real delivery records only &mdash; no estimated or sampled statistics.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="segmented" role="group" aria-label="Date range" id="analytics-range">
+            <button type="button" data-range="7" aria-pressed="false">7 days</button>
+            <button type="button" data-range="14" aria-pressed="true">14 days</button>
+          </div>
+          <button type="button" class="btn btn-secondary btn-sm" id="export-analytics"><i data-lucide="download" class="size-[15px]"></i>Export</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="stat-card">
+          <p class="stat-label"><i data-lucide="check-check" class="size-3.5"></i>Acceptance rate</p>
+          <p class="stat-value">98.64%</p>
+          <p class="stat-meta"><span class="font-medium text-success">+0.6pt</span> vs previous period</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label"><i data-lucide="send" class="size-3.5"></i>Notifications</p>
+          <p class="stat-value">128</p>
+          <p class="stat-meta">30-day total &middot; 4 today</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label"><i data-lucide="user-plus" class="size-3.5"></i>New subscribers</p>
+          <p class="stat-value">1,284</p>
+          <p class="stat-meta"><span class="font-medium text-success">+3.2%</span> in the last 14 days</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label"><i data-lucide="gauge" class="size-3.5"></i>Avg daily units</p>
+          <p class="stat-value">670</p>
+          <p class="stat-meta">of 1,000 daily allowance</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <section class="card xl:col-span-2" aria-labelledby="analytics-volume-title">
+          <div class="card-header">
+            <div>
+              <h2 id="analytics-volume-title" class="card-title">Delivery volume</h2>
+              <p class="card-sub">Accepted vs failed deliveries</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" data-toggle-table="analytics-volume-table" aria-expanded="false" aria-controls="analytics-volume-table">Data table</button>
+          </div>
+          <div class="p-5 pt-4">
+            <div class="h-[272px]"><canvas id="chart-analytics-volume" aria-label="Stacked bar chart of accepted and failed deliveries"></canvas></div>
+            <div id="analytics-volume-table" class="hidden pt-4">
+              <div class="table-wrap rounded-lg border border-line">
+                <table class="data-table min-w-[420px]">
+                  <caption class="sr-only">Delivery volume by day</caption>
+                  <thead><tr><th scope="col">Date</th><th scope="col">Accepted</th><th scope="col">Failed</th><th scope="col">Success rate</th></tr></thead>
+                  <tbody id="analytics-volume-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="analytics-platform-title">
+          <div class="card-header">
+            <div>
+              <h2 id="analytics-platform-title" class="card-title">Platform mix</h2>
+              <p class="card-sub">Active subscribers</p>
+            </div>
+          </div>
+          <div class="card-body pt-4">
+            <div class="h-[210px]"><canvas id="chart-analytics-platform" aria-label="Horizontal bar chart of active subscribers by platform"></canvas></div>
+            <dl class="mt-4 space-y-3 border-t border-line pt-4">
+              <div class="flex items-center justify-between text-[12.5px]"><dt class="text-sub">Web Push</dt><dd class="font-mono text-[11.5px] text-muted">15,574 &middot; 68%</dd></div>
+              <div class="flex items-center justify-between text-[12.5px]"><dt class="text-sub">Android &middot; FCM</dt><dd class="font-mono text-[11.5px] text-muted">5,490 &middot; 24%</dd></div>
+              <div class="flex items-center justify-between text-[12.5px]"><dt class="text-sub">iOS &middot; APNs</dt><dd class="font-mono text-[11.5px] text-muted">1,840 &middot; 8%</dd></div>
+            </dl>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section class="card" aria-labelledby="analytics-success-title">
+          <div class="card-header">
+            <div>
+              <h2 id="analytics-success-title" class="card-title">Acceptance rate</h2>
+              <p class="card-sub">Provider acceptance over time</p>
+            </div>
+            <span class="badge badge-success">Healthy</span>
+          </div>
+          <div class="p-5 pt-4"><div class="h-[210px]"><canvas id="chart-analytics-success" aria-label="Line chart of acceptance rate over time"></canvas></div></div>
+        </section>
+        <section class="card" aria-labelledby="analytics-growth-title">
+          <div class="card-header">
+            <div>
+              <h2 id="analytics-growth-title" class="card-title">Subscriber growth</h2>
+              <p class="card-sub">Active subscribers, cumulative</p>
+            </div>
+            <span class="badge badge-success">+1,284</span>
+          </div>
+          <div class="p-5 pt-4"><div class="h-[210px]"><canvas id="chart-analytics-growth" aria-label="Area chart of active subscriber growth"></canvas></div></div>
+        </section>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <section class="card xl:col-span-2" aria-labelledby="analytics-usage-title">
+          <div class="card-header">
+            <div>
+              <h2 id="analytics-usage-title" class="card-title">Daily usage</h2>
+              <p class="card-sub">Delivery units against the 1,000/day allowance</p>
+            </div>
+            <a href="usage.html" class="btn btn-ghost btn-sm">Usage detail<i data-lucide="arrow-right" class="size-4"></i></a>
+          </div>
+          <div class="p-5 pt-4"><div class="h-[250px]"><canvas id="chart-analytics-usage" aria-label="Bar chart of daily delivery units with the daily limit line"></canvas></div></div>
+        </section>
+
+        <section class="card" aria-labelledby="analytics-breakdown-title">
+          <div class="card-header">
+            <div>
+              <h2 id="analytics-breakdown-title" class="card-title">Daily breakdown</h2>
+              <p class="card-sub">Last 7 days</p>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table min-w-[340px]">
+              <caption class="sr-only">Daily delivery breakdown</caption>
+              <thead><tr><th scope="col">Date</th><th scope="col" class="text-right">Units</th><th scope="col" class="text-right">Success</th></tr></thead>
+              <tbody id="analytics-table-body"></tbody>
+            </table>
+          </div>
+          <div class="border-t border-line px-4 py-3">
+            <p class="text-[11px] leading-relaxed text-muted">Success is measured on provider acceptance. Expired tokens are excluded after cleanup.</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="rounded-lg border border-line bg-surface p-4 shadow-card">
+        <p class="flex items-start gap-2 text-[12px] leading-relaxed text-sub"><i data-lucide="info" class="mt-0.5 size-4 shrink-0 text-muted"></i><span>Mira separates <span class="font-medium text-ink">queue acceptance</span>, <span class="font-medium text-ink">provider acceptance</span> and <span class="font-medium text-ink">confirmed display</span>. Charts on this page report the first two. Display and open data appear only when a provider reports them.</span></p>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- @include partials/app-scripts.html -->
+</body>
+</html>

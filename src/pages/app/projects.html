@@ -1,0 +1,101 @@
+<!-- @title Projects · Mira -->
+<!-- @desc Create and switch between isolated Mira projects. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="projects" data-title="Projects">
+<!-- @include partials/sprite.html -->
+<!-- @include partials/sidebar.html -->
+
+<div class="flex min-h-screen flex-col lg:pl-[264px]">
+  <!-- @include partials/topbar.html -->
+
+  <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-page space-y-5">
+
+      <div class="page-header">
+        <div>
+          <h1 class="text-[24px] font-semibold leading-tight tracking-[-0.03em]">Projects</h1>
+          <p class="mt-1.5 text-[13.5px] text-muted">Every project has isolated subscribers, API keys, delivery records, webhooks and usage.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="../docs.html#projects" class="btn btn-secondary btn-sm"><i data-lucide="book-open" class="size-[15px]"></i>How projects work</a>
+          <button type="button" class="btn btn-primary btn-sm" data-project-create><i data-lucide="plus" class="size-[15px]"></i>New project</button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3 rounded-xl border border-line bg-surface px-4 py-3 shadow-card sm:flex-row sm:items-center">
+        <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-primary-soft text-link"><i data-lucide="layers" class="size-4"></i></span>
+        <p class="flex-1 text-[12.5px] text-sub"><span class="font-semibold text-ink">3 of 5 projects</span> are in use on the Free plan. Test and live environments are isolated at the data layer.</p>
+        <a href="usage.html" class="btn btn-ghost btn-sm shrink-0">Plan limits<i data-lucide="arrow-right" class="size-3.5"></i></a>
+      </div>
+
+      <div id="project-grid" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3"></div>
+
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section class="card card-body">
+          <div class="flex items-start gap-3">
+            <span class="grid size-9 shrink-0 place-items-center rounded-lg border border-line bg-sunken text-muted"><i data-lucide="shield-check" class="size-[18px]"></i></span>
+            <div>
+              <h2 class="card-title">Isolation by default</h2>
+              <p class="mt-1 text-[13px] leading-relaxed text-sub">API keys are scoped to a single project. A request authenticated with one project&rsquo;s key can never read another project&rsquo;s subscribers, deliveries or usage. Ownership is verified on every protected operation.</p>
+            </div>
+          </div>
+        </section>
+        <section class="card card-body">
+          <div class="flex items-start gap-3">
+            <span class="grid size-9 shrink-0 place-items-center rounded-lg border border-line bg-sunken text-muted"><i data-lucide="git-branch" class="size-[18px]"></i></span>
+            <div>
+              <h2 class="card-title">Test before you ship</h2>
+              <p class="mt-1 text-[13px] leading-relaxed text-sub">Test-environment keys use <code class="inline-code">mira_sk_test_</code> prefixes and never touch live provider credentials. Switch environments from the project menu without changing code.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Create project -->
+<dialog id="project-dialog" class="modal" aria-labelledby="project-dialog-title">
+  <form id="project-form" novalidate>
+    <div class="modal-header">
+      <div>
+        <h2 id="project-dialog-title" class="text-[16px] font-semibold tracking-[-0.02em]">Create a project</h2>
+        <p class="mt-0.5 text-[12.5px] text-muted">Projects are isolated workspaces with their own keys and audience.</p>
+      </div>
+      <button type="button" class="btn btn-ghost btn-icon !size-8" data-dialog-close aria-label="Close dialog"><i data-lucide="x" class="size-4"></i></button>
+    </div>
+    <div class="modal-body space-y-4">
+      <div>
+        <label class="label" for="project-name">Project name</label>
+        <input class="input" id="project-name" name="name" type="text" placeholder="Acme Production" required data-autofocus>
+        <p class="hint">Use a name your team will recognise. You can rename it later.</p>
+        <p class="error-text hidden" data-error-for="project-name"><i data-lucide="alert-circle" class="size-3.5 shrink-0"></i>Enter a project name.</p>
+      </div>
+      <fieldset>
+        <legend class="label">Environment</legend>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="flex cursor-pointer items-start gap-2.5 rounded-lg border border-line p-3 transition hover:bg-sunken has-[:checked]:border-primary has-[:checked]:bg-primary-soft/50">
+            <input type="radio" name="env" value="live" class="mt-0.5 accent-primary" checked>
+            <span><span class="block text-[13px] font-medium text-ink">Live</span><span class="mt-0.5 block text-[11.5px] text-muted">Real devices and providers</span></span>
+          </label>
+          <label class="flex cursor-pointer items-start gap-2.5 rounded-lg border border-line p-3 transition hover:bg-sunken has-[:checked]:border-primary has-[:checked]:bg-primary-soft/50">
+            <input type="radio" name="env" value="test" class="mt-0.5 accent-primary">
+            <span><span class="block text-[13px] font-medium text-ink">Test</span><span class="mt-0.5 block text-[11.5px] text-muted">Sandbox keys and logs</span></span>
+          </label>
+        </div>
+      </fieldset>
+      <div class="rounded-lg border border-line bg-sunken/60 p-3">
+        <p class="flex items-start gap-2 text-[12px] leading-relaxed text-sub"><i data-lucide="info" class="mt-0.5 size-3.5 shrink-0 text-muted"></i>Your project starts on the Free plan with 1,000 delivery units per day. VAPID keys are generated automatically for Web Push.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-sm" data-dialog-close>Cancel</button>
+      <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="plus" class="size-[15px]"></i>Create project</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- @include partials/app-scripts.html -->
+</body>
+</html>

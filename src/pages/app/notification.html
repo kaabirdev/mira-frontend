@@ -1,0 +1,187 @@
+<!-- @title Notification details · Mira -->
+<!-- @desc Delivery breakdown, payload and provider responses for a notification. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="notifications" data-title="Notification details">
+<!-- @include partials/sprite.html -->
+<!-- @include partials/sidebar.html -->
+
+<div class="flex min-h-screen flex-col lg:pl-[264px]">
+  <!-- @include partials/topbar.html -->
+
+  <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-page space-y-5">
+
+      <nav class="flex items-center gap-1.5 text-[12.5px] text-muted" aria-label="Breadcrumb">
+        <a href="notifications.html" class="hover:text-ink">Notifications</a>
+        <i data-lucide="chevron-right" class="size-3.5"></i>
+        <span class="font-mono text-[11.5px] text-sub" data-ntf-id>ntf_…</span>
+      </nav>
+
+      <div class="page-header">
+        <div class="min-w-0">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h1 class="truncate text-[23px] font-semibold leading-tight tracking-[-0.03em]" data-ntf-title>Notification</h1>
+            <span data-ntf-status></span>
+          </div>
+          <p class="mt-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12.5px] text-muted">
+            <span>Sent <span data-ntf-created></span></span>
+            <span class="text-line-strong">&middot;</span>
+            <span>Audience <span class="font-medium text-sub" data-ntf-audience></span></span>
+            <span class="text-line-strong">&middot;</span>
+            <button type="button" class="inline-flex items-center gap-1 font-medium text-link hover:underline" data-copy-notification>
+              <i data-lucide="copy" class="size-3"></i>Copy ID
+            </button>
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="notifications.html?compose=1" class="btn btn-secondary btn-sm"><i data-lucide="copy-plus" class="size-[15px]"></i>Duplicate</a>
+          <button type="button" class="btn btn-primary btn-sm" id="resend-failed" data-resend-failed><i data-lucide="refresh-cw" class="size-[15px]"></i>Resend failed</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="stat-card">
+          <p class="stat-label"><i data-lucide="users" class="size-3.5"></i>Audience</p>
+          <p class="stat-value" data-ntf-total>0</p>
+          <p class="stat-meta">targeted devices</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label"><i data-lucide="check-check" class="size-3.5"></i>Provider accepted</p>
+          <p class="stat-value" data-ntf-accepted>0</p>
+          <p class="stat-meta" data-ntf-acceptance>0% of audience</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label"><i data-lucide="circle-x" class="size-3.5"></i>Failed</p>
+          <p class="stat-value" data-ntf-failed>0</p>
+          <p class="stat-meta"><span class="text-danger" data-ntf-failed-pct>0%</span> after retries</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label"><i data-lucide="clock" class="size-3.5"></i>Pending</p>
+          <p class="stat-value" data-ntf-pending>0</p>
+          <p class="stat-meta" data-ntf-pending-note>nothing in flight</p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <section class="card xl:col-span-2" aria-labelledby="payload-title">
+          <div class="card-header">
+            <div>
+              <h2 id="payload-title" class="card-title">Push preview</h2>
+              <p class="card-sub">Rendered payload sent to providers</p>
+            </div>
+            <span class="badge badge-outline" data-ntf-channels>Web Push</span>
+          </div>
+          <div class="grid gap-5 p-5 md:grid-cols-[0.9fr_1.1fr]">
+            <div class="rounded-xl border border-line bg-canvas p-4">
+              <div class="mb-3 flex items-center gap-1.5 border-b border-line pb-2.5">
+                <span class="size-2 rounded-full bg-line-strong"></span>
+                <span class="size-2 rounded-full bg-line-strong"></span>
+                <span class="size-2 rounded-full bg-line-strong"></span>
+                <span class="mx-auto text-[10px] text-muted">acme.dev</span>
+              </div>
+              <div class="flex items-start gap-2.5 rounded-lg border border-line bg-surface p-3 shadow-card">
+                <span class="brand-mark size-9 shrink-0"><svg class="size-5" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-center justify-between gap-2"><span class="text-[10px] font-medium text-muted">mira.dev</span><span class="text-[10px] text-muted">now</span></div>
+                  <p class="mt-1 text-[13px] font-semibold leading-snug text-ink" data-ntf-preview-title>—</p>
+                  <p class="mt-0.5 line-clamp-3 text-[11.5px] leading-relaxed text-sub" data-ntf-preview-body>—</p>
+                </div>
+              </div>
+              <p class="mt-3 text-center text-[10px] text-muted">Chrome 131 &middot; macOS 15</p>
+            </div>
+            <div>
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">Request payload</p>
+                <button type="button" class="btn btn-ghost btn-sm !h-7 !px-2" data-copy-target="#notification-payload"><i data-lucide="copy" class="size-3"></i>Copy</button>
+              </div>
+              <div class="code-block mt-2">
+                <pre class="!max-h-[260px] !p-3.5"><code id="notification-payload"></code></pre>
+              </div>
+              <div class="mt-3 space-y-2 text-[11.5px]">
+                <div class="flex items-start justify-between gap-3"><span class="text-muted">Click-through</span><a href="#" class="truncate font-mono text-[11px] text-link hover:underline" data-ntf-url target="_blank" rel="noreferrer">—</a></div>
+                <div class="flex items-start justify-between gap-3"><span class="text-muted">Idempotency key</span><span class="font-mono text-[11px] text-sub" data-ntf-idem>—</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="breakdown-title">
+          <div class="card-header">
+            <div>
+              <h2 id="breakdown-title" class="card-title">Delivery breakdown</h2>
+              <p class="card-sub">Provider responses</p>
+            </div>
+          </div>
+          <div class="card-body pt-4">
+            <div class="mx-auto h-[190px] max-w-[210px]">
+              <canvas id="chart-breakdown" aria-label="Doughnut chart of accepted, failed and pending deliveries"></canvas>
+            </div>
+            <dl class="mt-4 space-y-2.5 border-t border-line pt-4">
+              <div class="flex items-center justify-between text-[12.5px]"><dt class="flex items-center gap-2 text-sub"><span class="size-2 rounded-[2px] bg-success"></span>Accepted</dt><dd class="font-mono text-[11.5px] text-muted" data-breakdown-accepted>0</dd></div>
+              <div class="flex items-center justify-between text-[12.5px]"><dt class="flex items-center gap-2 text-sub"><span class="size-2 rounded-[2px] bg-danger"></span>Failed</dt><dd class="font-mono text-[11.5px] text-muted" data-breakdown-failed>0</dd></div>
+              <div class="flex items-center justify-between text-[12.5px]"><dt class="flex items-center gap-2 text-sub"><span class="size-2 rounded-[2px] bg-muted"></span>Pending</dt><dd class="font-mono text-[11.5px] text-muted" data-breakdown-pending>0</dd></div>
+            </dl>
+            <div class="mt-4 rounded-lg border border-line bg-sunken/60 p-3">
+              <p class="text-[11px] leading-relaxed text-sub"><span class="font-semibold text-ink">Accepted &ne; displayed.</span> These counts reflect Mira queueing and provider acceptance. Device display and open events are reported separately when available.</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <section class="card xl:col-span-2" aria-labelledby="failed-title">
+          <div class="card-header">
+            <div>
+              <h2 id="failed-title" class="card-title">Failed deliveries</h2>
+              <p class="card-sub">Provider errors after retries exhausted</p>
+            </div>
+            <a href="deliveries.html" class="btn btn-ghost btn-sm">All logs<i data-lucide="arrow-right" class="size-4"></i></a>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table min-w-[620px]">
+              <caption class="sr-only">Failed deliveries for this notification</caption>
+              <thead><tr><th scope="col">Subscriber</th><th scope="col">Provider</th><th scope="col">Attempts</th><th scope="col">Error</th></tr></thead>
+              <tbody id="failed-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="timeline-title">
+          <div class="card-header">
+            <div>
+              <h2 id="timeline-title" class="card-title">Timeline</h2>
+              <p class="card-sub">Queue and provider events</p>
+            </div>
+          </div>
+          <div class="card-body">
+            <ol class="relative space-y-4 border-l border-line pl-4">
+              <li class="relative">
+                <span class="absolute -left-[21px] top-1 grid size-2.5 place-items-center rounded-full border-2 border-surface bg-primary"></span>
+                <p class="text-[12.5px] font-medium text-ink">Queued</p>
+                <p class="mt-0.5 text-[11.5px] text-muted" data-ntf-queued>—</p>
+                <p class="mt-0.5 text-[11px] text-muted">Quota reserved &middot; jobs dispatched to platform queues</p>
+              </li>
+              <li class="relative">
+                <span class="absolute -left-[21px] top-1 grid size-2.5 place-items-center rounded-full border-2 border-surface bg-success"></span>
+                <p class="text-[12.5px] font-medium text-ink">Provider accepted</p>
+                <p class="mt-0.5 text-[11.5px] text-muted" data-ntf-completed>—</p>
+                <p class="mt-0.5 text-[11px] text-muted">First responses recorded from Web Push, FCM and APNs</p>
+              </li>
+              <li class="relative">
+                <span class="absolute -left-[21px] top-1 grid size-2.5 place-items-center rounded-full border-2 border-surface bg-line-strong"></span>
+                <p class="text-[12.5px] font-medium text-sub">Display confirmed</p>
+                <p class="mt-0.5 text-[11px] text-muted">Not reported by all providers. Mira never infers a display event from provider acceptance.</p>
+              </li>
+            </ol>
+            <button type="button" class="btn btn-secondary btn-sm mt-5 w-full" data-copy-target="#notification-payload"><i data-lucide="braces" class="size-3.5"></i>Copy payload</button>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- @include partials/app-scripts.html -->
+</body>
+</html>

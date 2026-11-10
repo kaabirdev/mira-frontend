@@ -1,0 +1,305 @@
+<!-- @title Status · Mira -->
+<!-- @desc Live operational status for the Mira API, Web Push, FCM, APNs, webhooks and dashboard. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="status">
+<!-- @include partials/sprite.html -->
+
+<header class="sticky top-0 z-40 border-b border-line bg-canvas/95">
+  <div class="container-page flex h-16 items-center gap-3">
+    <a href="index.html" class="flex items-center gap-2.5 rounded-lg" aria-label="Mira home">
+      <span class="brand-mark size-8"><svg class="size-5" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+      <span class="text-[19px] font-bold leading-none tracking-[-0.045em] text-ink">mira</span>
+    </a>
+    <span class="ml-1 hidden rounded border border-line px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-wider text-muted sm:inline">status</span>
+
+    <nav class="ml-6 hidden items-center gap-0.5 lg:flex" aria-label="Main">
+      <a href="index.html#product" class="nav-link">Product</a>
+      <a href="index.html#pricing" class="nav-link">Pricing</a>
+      <a href="docs.html" class="nav-link">Docs</a>
+      <a href="status.html" class="nav-link text-ink" aria-current="page">Status</a>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1.5">
+      <button type="button" class="btn btn-ghost btn-icon" data-theme-toggle aria-label="Toggle color theme">
+        <i data-lucide="sun-moon" class="size-[18px]"></i>
+      </button>
+      <a href="docs.html" class="btn btn-ghost btn-sm hidden sm:inline-flex">Documentation</a>
+      <a href="app/index.html" class="btn btn-primary btn-sm">Dashboard<i data-lucide="arrow-right" class="size-3.5"></i></a>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+  <section class="relative overflow-hidden border-b border-line">
+    <div class="grid-pattern pointer-events-none absolute inset-x-0 top-0 h-[360px]" aria-hidden="true"></div>
+    <div class="container-page relative py-12 sm:py-14">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-full border border-success/30 bg-success-soft px-3 py-1 text-[11.5px] font-medium text-success">
+            <span class="dot"></span>All systems operational
+          </span>
+          <h1 class="mt-4 text-[32px] font-semibold leading-tight tracking-[-0.04em] sm:text-[40px]">Mira status</h1>
+          <p class="mt-2 max-w-xl text-[13.5px] leading-relaxed text-sub">Live availability for the API, provider queues, webhooks and dashboard. Updated every 60 seconds; 60-day history shown per component.</p>
+        </div>
+        <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <p class="text-[11px] text-muted">Last checked <span class="font-mono text-sub" data-last-checked>just now</span></p>
+          <a href="#subscribe" class="btn btn-secondary btn-sm"><i data-lucide="bell" class="size-3.5"></i>Subscribe to updates</a>
+        </div>
+      </div>
+
+      <dl class="mt-10 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">
+        <div class="bg-surface px-4 py-4">
+          <dt class="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">Overall uptime</dt>
+          <dd class="mt-1.5 text-[24px] font-semibold leading-none tracking-[-0.03em] text-ink tabular-nums">99.97%</dd>
+          <p class="mt-1.5 font-mono text-[10.5px] text-muted">last 60 days</p>
+        </div>
+        <div class="bg-surface px-4 py-4">
+          <dt class="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">API p95</dt>
+          <dd class="mt-1.5 text-[24px] font-semibold leading-none tracking-[-0.03em] text-ink tabular-nums">212<span class="ml-1 text-[12px] font-medium text-muted">ms</span></dd>
+          <p class="mt-1.5 font-mono text-[10.5px] text-success">within target</p>
+        </div>
+        <div class="bg-surface px-4 py-4">
+          <dt class="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">Accepted rate</dt>
+          <dd class="mt-1.5 text-[24px] font-semibold leading-none tracking-[-0.03em] text-ink tabular-nums">99.4%</dd>
+          <p class="mt-1.5 font-mono text-[10.5px] text-muted">last 24 hours</p>
+        </div>
+        <div class="bg-surface px-4 py-4">
+          <dt class="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">Incidents</dt>
+          <dd class="mt-1.5 text-[24px] font-semibold leading-none tracking-[-0.03em] text-ink tabular-nums">0</dd>
+          <p class="mt-1.5 font-mono text-[10.5px] text-muted">active now</p>
+        </div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="container-page py-10">
+    <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:items-start">
+      <div class="card overflow-hidden">
+        <div class="card-header">
+          <div>
+            <h2 class="card-title">Components</h2>
+            <p class="card-sub">60-day availability, ending today</p>
+          </div>
+          <div class="flex items-center gap-3 text-[10.5px] text-muted">
+            <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-sm bg-success"></span>Operational</span>
+            <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-sm bg-warning"></span>Degraded</span>
+            <span class="inline-flex items-center gap-1.5"><span class="size-2 rounded-sm bg-danger"></span>Outage</span>
+          </div>
+        </div>
+
+        <div class="divide-y divide-line">
+          <div class="px-5 py-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-primary-soft text-link"><i data-lucide="server" class="size-4"></i></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-semibold text-ink">REST API</p>
+                <p class="text-[11px] text-muted">api.lazytown.dev &middot; authentication, subscribers, notifications</p>
+              </div>
+              <span class="badge badge-success"><span class="dot"></span>Operational</span>
+              <span class="w-14 text-right font-mono text-[11px] text-sub">99.98%</span>
+            </div>
+            <div class="mt-3.5 uptime-track" data-uptime-track data-seed="api" data-days="60" role="img" aria-label="REST API availability over the last 60 days: 99.98 percent"></div>
+          </div>
+
+          <div class="px-5 py-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-sunken text-muted"><i data-lucide="layout-dashboard" class="size-4"></i></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-semibold text-ink">Dashboard</p>
+                <p class="text-[11px] text-muted">app.lazytown.dev &middot; projects, logs, analytics</p>
+              </div>
+              <span class="badge badge-success"><span class="dot"></span>Operational</span>
+              <span class="w-14 text-right font-mono text-[11px] text-sub">99.99%</span>
+            </div>
+            <div class="mt-3.5 uptime-track" data-uptime-track data-seed="dashboard" data-days="60" role="img" aria-label="Dashboard availability over the last 60 days: 99.99 percent"></div>
+          </div>
+
+          <div class="px-5 py-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-sunken text-muted"><i data-lucide="globe" class="size-4"></i></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-semibold text-ink">Web Push</p>
+                <p class="text-[11px] text-muted">VAPID &middot; push service fan-out</p>
+              </div>
+              <span class="badge badge-success"><span class="dot"></span>Operational</span>
+              <span class="w-14 text-right font-mono text-[11px] text-sub">99.97%</span>
+            </div>
+            <div class="mt-3.5 uptime-track" data-uptime-track data-seed="webpush" data-days="60" role="img" aria-label="Web Push availability over the last 60 days: 99.97 percent"></div>
+          </div>
+
+          <div class="px-5 py-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-sunken text-muted"><i data-lucide="flame" class="size-4"></i></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-semibold text-ink">Firebase Cloud Messaging</p>
+                <p class="text-[11px] text-muted">Android delivery queue &middot; upstream provider</p>
+              </div>
+              <span class="badge badge-success"><span class="dot"></span>Operational</span>
+              <span class="w-14 text-right font-mono text-[11px] text-sub">99.94%</span>
+            </div>
+            <div class="mt-3.5 uptime-track" data-uptime-track data-seed="fcm" data-days="60" role="img" aria-label="Firebase Cloud Messaging availability over the last 60 days: 99.94 percent"></div>
+          </div>
+
+          <div class="px-5 py-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-sunken text-muted"><i data-lucide="apple" class="size-4"></i></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-semibold text-ink">Apple Push Notification service</p>
+                <p class="text-[11px] text-muted">iOS delivery queue &middot; upstream provider</p>
+              </div>
+              <span class="badge badge-success"><span class="dot"></span>Operational</span>
+              <span class="w-14 text-right font-mono text-[11px] text-sub">99.99%</span>
+            </div>
+            <div class="mt-3.5 uptime-track" data-uptime-track data-seed="apns" data-days="60" role="img" aria-label="Apple Push Notification service availability over the last 60 days: 99.99 percent"></div>
+          </div>
+
+          <div class="px-5 py-4">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-sunken text-muted"><i data-lucide="webhook" class="size-4"></i></span>
+              <div class="min-w-0 flex-1">
+                <p class="text-[13px] font-semibold text-ink">Webhooks</p>
+                <p class="text-[11px] text-muted">Event fan-out &middot; signed delivery with retries</p>
+              </div>
+              <span class="badge badge-success"><span class="dot"></span>Operational</span>
+              <span class="w-14 text-right font-mono text-[11px] text-sub">99.96%</span>
+            </div>
+            <div class="mt-3.5 uptime-track" data-uptime-track data-seed="webhooks" data-days="60" role="img" aria-label="Webhook availability over the last 60 days: 99.96 percent"></div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 border-t border-line bg-sunken/50 px-5 py-2.5 text-[10.5px] text-muted">
+          <span>60 days ago</span>
+          <span>Availability measured from successful requests and provider responses.</span>
+          <span>Today</span>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="card">
+          <div class="card-body">
+            <div class="flex items-start gap-2.5">
+              <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-sunken text-muted"><i data-lucide="calendar-clock" class="size-4"></i></span>
+              <div>
+                <h2 class="text-[13px] font-semibold text-ink">Scheduled maintenance</h2>
+                <p class="mt-1 text-[11.5px] leading-relaxed text-sub">No maintenance windows are scheduled. Provider maintenance is tracked upstream and never requires action from you.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="subscribe">
+          <div class="card-body">
+            <h2 class="text-[13px] font-semibold text-ink">Subscribe to updates</h2>
+            <p class="mt-1 text-[11.5px] leading-relaxed text-sub">Get an email when an incident opens, changes or resolves. No marketing email.</p>
+            <form class="mt-4 space-y-2.5" novalidate data-status-subscribe>
+              <div>
+                <label class="sr-only" for="status-email">Email address</label>
+                <input id="status-email" name="email" type="email" class="input h-9 text-[13px]" placeholder="you@company.com" autocomplete="email" required aria-describedby="status-email-error">
+                <p class="error-text hidden" id="status-email-error" data-status-error role="alert"><i data-lucide="circle-alert" class="size-3.5 shrink-0"></i><span></span></p>
+              </div>
+              <button type="submit" class="btn btn-primary btn-sm w-full">Subscribe<i data-lucide="arrow-right" class="size-3.5"></i></button>
+            </form>
+            <p class="mt-2.5 text-[10.5px] leading-relaxed text-muted">Confirmation required. Unsubscribe from every email.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-body">
+            <h2 class="text-[13px] font-semibold text-ink">Response targets</h2>
+            <dl class="mt-3 space-y-2.5 text-[11.5px]">
+              <div class="flex items-center justify-between gap-3"><dt class="text-sub">API availability</dt><dd class="font-mono text-ink">99.9%</dd></div>
+              <div class="flex items-center justify-between gap-3"><dt class="text-sub">API p95 latency</dt><dd class="font-mono text-ink">&lt; 400 ms</dd></div>
+              <div class="flex items-center justify-between gap-3"><dt class="text-sub">Queue start</dt><dd class="font-mono text-ink">&lt; 5 s</dd></div>
+              <div class="flex items-center justify-between gap-3"><dt class="text-sub">Webhook delivery</dt><dd class="font-mono text-ink">&lt; 10 s</dd></div>
+            </dl>
+            <a href="docs.html#quotas" class="mt-4 inline-flex items-center gap-1 text-[11.5px] font-medium text-link hover:underline">Read the SLA details<i data-lucide="arrow-up-right" class="size-3"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="mt-10" aria-labelledby="incidents-title">
+      <div class="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2 id="incidents-title" class="text-[19px] font-semibold tracking-[-0.02em] text-ink">Incident history</h2>
+          <p class="mt-1 text-[12px] text-muted">Resolved incidents from the last 60 days.</p>
+        </div>
+        <a href="docs.html#webhooks" class="btn btn-ghost btn-sm">Incident webhooks<i data-lucide="arrow-right" class="size-3.5"></i></a>
+      </div>
+
+      <div class="mt-4 divide-y divide-line overflow-hidden rounded-xl border border-line bg-surface">
+        <details class="group">
+          <summary class="flex cursor-pointer list-none flex-wrap items-center gap-3 px-5 py-4 [&::-webkit-details-marker]:hidden">
+            <span class="badge badge-success">Resolved</span>
+            <span class="min-w-0 flex-1 text-[13px] font-medium text-ink">FCM delivery delays in EU region</span>
+            <span class="font-mono text-[11px] text-muted">Nov 8, 2026</span>
+            <i data-lucide="chevron-down" class="size-4 text-muted transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="border-t border-line bg-sunken/40 px-5 py-4">
+            <p class="text-[12.5px] leading-relaxed text-sub">Android jobs bound for the EU FCM region queued for up to 14 minutes between 09:02 and 09:44 UTC. US and APAC regions were unaffected. Jobs were not lost and no quota was double-charged. Root cause was an upstream FCM degradation.</p>
+            <dl class="mt-3 grid grid-cols-2 gap-3 text-[11px] sm:grid-cols-4">
+              <div><dt class="text-muted">Duration</dt><dd class="mt-0.5 font-medium text-ink">42 min</dd></div>
+              <div><dt class="text-muted">Component</dt><dd class="mt-0.5 font-medium text-ink">FCM queue</dd></div>
+              <div><dt class="text-muted">Impact</dt><dd class="mt-0.5 font-medium text-ink">Delayed</dd></div>
+              <div><dt class="text-muted">Status</dt><dd class="mt-0.5 font-medium text-success">Resolved</dd></div>
+            </dl>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary class="flex cursor-pointer list-none flex-wrap items-center gap-3 px-5 py-4 [&::-webkit-details-marker]:hidden">
+            <span class="badge badge-success">Resolved</span>
+            <span class="min-w-0 flex-1 text-[13px] font-medium text-ink">Elevated API latency on analytics endpoints</span>
+            <span class="font-mono text-[11px] text-muted">Oct 27, 2026</span>
+            <i data-lucide="chevron-down" class="size-4 text-muted transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="border-t border-line bg-sunken/40 px-5 py-4">
+            <p class="text-[12.5px] leading-relaxed text-sub">Analytics read queries exceeded the p95 target for 26 minutes. Sending and delivery remained within target. A missing composite index was added and the affected queries were re-run.</p>
+            <dl class="mt-3 grid grid-cols-2 gap-3 text-[11px] sm:grid-cols-4">
+              <div><dt class="text-muted">Duration</dt><dd class="mt-0.5 font-medium text-ink">26 min</dd></div>
+              <div><dt class="text-muted">Component</dt><dd class="mt-0.5 font-medium text-ink">Dashboard API</dd></div>
+              <div><dt class="text-muted">Impact</dt><dd class="mt-0.5 font-medium text-ink">Degraded</dd></div>
+              <div><dt class="text-muted">Status</dt><dd class="mt-0.5 font-medium text-success">Resolved</dd></div>
+            </dl>
+          </div>
+        </details>
+
+        <details class="group">
+          <summary class="flex cursor-pointer list-none flex-wrap items-center gap-3 px-5 py-4 [&::-webkit-details-marker]:hidden">
+            <span class="badge badge-success">Resolved</span>
+            <span class="min-w-0 flex-1 text-[13px] font-medium text-ink">Webhook retries delayed for a subset of endpoints</span>
+            <span class="font-mono text-[11px] text-muted">Oct 12, 2026</span>
+            <i data-lucide="chevron-down" class="size-4 text-muted transition-transform group-open:rotate-180"></i>
+          </summary>
+          <div class="border-t border-line bg-sunken/40 px-5 py-4">
+            <p class="text-[12.5px] leading-relaxed text-sub">A worker pool saturation delayed retries for roughly 4% of webhook endpoints. Initial attempts were unaffected, and all queued events were delivered within 40 minutes. Worker concurrency was increased and an alert was added on queue age.</p>
+            <dl class="mt-3 grid grid-cols-2 gap-3 text-[11px] sm:grid-cols-4">
+              <div><dt class="text-muted">Duration</dt><dd class="mt-0.5 font-medium text-ink">31 min</dd></div>
+              <div><dt class="text-muted">Component</dt><dd class="mt-0.5 font-medium text-ink">Webhooks</dd></div>
+              <div><dt class="text-muted">Impact</dt><dd class="mt-0.5 font-medium text-ink">Delayed</dd></div>
+              <div><dt class="text-muted">Status</dt><dd class="mt-0.5 font-medium text-success">Resolved</dd></div>
+            </dl>
+          </div>
+        </details>
+      </div>
+      <p class="mt-3 text-[10.5px] text-muted">Status figures and incident entries on this page are illustrative frontend demo data.</p>
+    </section>
+  </section>
+</main>
+
+<footer class="border-t border-line bg-surface">
+  <div class="container-page flex flex-col gap-3 py-5 text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
+    <p>&copy; <span class="js-year">2026</span> LazyTown. Mira is push notification infrastructure.</p>
+    <div class="flex flex-wrap gap-4">
+      <a href="index.html" class="hover:text-ink">Home</a>
+      <a href="docs.html" class="hover:text-ink">Documentation</a>
+      <a href="index.html#pricing" class="hover:text-ink">Pricing</a>
+      <a href="login.html" class="hover:text-ink">Sign in</a>
+    </div>
+  </div>
+</footer>
+
+<!-- @include partials/site-scripts.html -->
+<script src="%BASE%assets/js/status.js"></script>
+</body>
+</html>

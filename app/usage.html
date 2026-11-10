@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Usage & billing · Mira</title>
+  <meta name="description" content="Daily quota, usage history and plan details for your project.">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#080d17" media="(prefers-color-scheme: dark)">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Usage & billing · Mira">
+  <meta property="og:description" content="Daily quota, usage history and plan details for your project.">
+  <meta property="og:site_name" content="Mira">
+
+  <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="../assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../assets/css/app.css">
+
+  <script>
+    window.MIRA_BASE = '../';
+    (function () {
+      try {
+        var mode = localStorage.getItem('mira-theme') || 'system';
+        var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.classList.add('js');
+      } catch (e) {}
+    })();
+  </script>
+
+  <script defer src="../assets/vendor/alpine.min.js"></script>
+  <script defer src="../assets/vendor/lucide.min.js"></script>
+</head>
+
+<body class="bg-canvas" data-page="usage" data-title="Usage &amp; billing">
+<svg xmlns="http://www.w3.org/2000/svg" class="absolute size-0 overflow-hidden" aria-hidden="true" focusable="false">
+  <symbol id="mira-mark" viewBox="0 0 32 32">
+    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+      <path d="M10 21.5a8.5 8.5 0 0 1 8.5-8.5"/>
+      <path d="M10 26.5a13.5 13.5 0 0 1 13.5-13.5" opacity=".55"/>
+    </g>
+    <circle cx="10" cy="21.5" r="2.3" fill="currentColor"/>
+  </symbol>
+</svg>
+
+<div id="sidebar-overlay" class="fixed inset-0 z-40 hidden bg-[#030712]/55 lg:hidden" data-sidebar-close></div>
+
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex w-[264px] -translate-x-full flex-col border-r border-line bg-surface transition-transform duration-200 ease-out lg:translate-x-0" aria-label="Main navigation">
+  <div class="flex h-16 items-center gap-2 px-4">
+    <a href="../app/index.html" class="flex items-center gap-2.5 rounded-lg" aria-label="Mira dashboard home">
+      <span class="brand-mark size-8">
+        <svg class="size-5" aria-hidden="true"><use href="#mira-mark"/></svg>
+      </span>
+      <span class="text-[18px] font-bold leading-none tracking-[-0.045em] text-ink">mira</span>
+    </a>
+    <span class="ml-1 hidden rounded border border-line px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-wider text-muted sm:inline">v1</span>
+    <button type="button" class="btn btn-ghost btn-icon ml-auto lg:hidden" data-sidebar-close aria-label="Close navigation">
+      <i data-lucide="x" class="size-5"></i>
+    </button>
+  </div>
+
+  <!-- Project switcher -->
+  <div class="px-3" x-data="{
+      open: false,
+      project: Mira.activeProject(),
+      init() { window.addEventListener('mira:project', (e) => { this.project = e.detail; }); }
+    }" @click.outside="open = false" @keydown.escape.prevent="open = false">
+    <div class="relative">
+      <button type="button" class="flex w-full items-center gap-2.5 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition hover:border-line-strong hover:bg-sunken" @click="open = !open" :aria-expanded="open" aria-haspopup="listbox">
+        <span class="grid size-7 shrink-0 place-items-center rounded-md bg-primary-soft font-mono text-[10.5px] font-semibold text-link" x-text="project.initials"></span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate text-[13px] font-semibold leading-tight text-ink" x-text="project.name"></span>
+          <span class="mt-1 flex items-center gap-1.5 text-[10.5px] leading-none text-muted">
+            <span class="dot" :class="project.env === 'live' ? 'text-success' : 'text-warning'"></span>
+            <span class="font-mono" x-text="project.env"></span>
+            <span class="text-line-strong">&middot;</span>
+            <span x-text="project.plan"></span>
+          </span>
+        </span>
+        <i data-lucide="chevrons-up-down" class="size-3.5 shrink-0 text-muted"></i>
+      </button>
+      <div x-show="open" x-cloak x-transition.opacity.duration.120ms class="menu absolute left-0 right-0 top-[calc(100%+6px)] !min-w-0" role="listbox" aria-label="Switch project">
+        <p class="px-2.5 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted">Projects</p>
+        <template x-for="p in Mira.projects" :key="p.id">
+          <button type="button" class="menu-item" role="option" :aria-selected="p.id === project.id" @click="Mira.setProject(p.id); open = false">
+            <span class="grid size-5 shrink-0 place-items-center rounded bg-sunken font-mono text-[9px] font-semibold" x-text="p.initials"></span>
+            <span class="min-w-0 flex-1 truncate" x-text="p.name"></span>
+            <span class="dot" :class="p.env === 'live' ? 'text-success' : 'text-warning'"></span>
+          </button>
+        </template>
+        <div class="menu-sep"></div>
+        <a class="menu-item" href="../app/projects.html"><i data-lucide="settings-2"></i>Manage projects</a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="mt-2 flex-1 overflow-y-auto px-3 pb-4">
+    <p class="sidebar-label">Workspace</p>
+    <div class="space-y-0.5">
+      <a class="sidebar-link" data-nav="overview" href="../app/index.html"><i data-lucide="layout-dashboard"></i>Overview</a>
+      <a class="sidebar-link" data-nav="projects" href="../app/projects.html"><i data-lucide="folder-kanban"></i>Projects</a>
+      <a class="sidebar-link" data-nav="subscribers" href="../app/subscribers.html"><i data-lucide="users"></i>Subscribers<span class="nav-count">24.3k</span></a>
+      <a class="sidebar-link" data-nav="notifications" href="../app/notifications.html"><i data-lucide="bell"></i>Notifications</a>
+      <a class="sidebar-link" data-nav="deliveries" href="../app/deliveries.html"><i data-lucide="list-checks"></i>Delivery logs</a>
+      <a class="sidebar-link" data-nav="analytics" href="../app/analytics.html"><i data-lucide="chart-no-axes-combined"></i>Analytics</a>
+    </div>
+
+    <p class="sidebar-label">Developer</p>
+    <div class="space-y-0.5">
+      <a class="sidebar-link" data-nav="api-keys" href="../app/api-keys.html"><i data-lucide="key-round"></i>API keys</a>
+      <a class="sidebar-link" data-nav="webhooks" href="../app/webhooks.html"><i data-lucide="webhook"></i>Webhooks</a>
+      <a class="sidebar-link" data-nav="usage" href="../app/usage.html"><i data-lucide="gauge"></i>Usage &amp; billing</a>
+    </div>
+
+    <p class="sidebar-label">Account</p>
+    <div class="space-y-0.5">
+      <a class="sidebar-link" data-nav="docs" href="../docs.html"><i data-lucide="book-open"></i>Documentation<i data-lucide="arrow-up-right" class="ml-auto !size-3.5"></i></a>
+      <a class="sidebar-link" data-nav="settings" href="../app/settings.html"><i data-lucide="settings"></i>Settings</a>
+    </div>
+  </nav>
+
+  <div class="border-t border-line p-3">
+    <div class="rounded-lg border border-line bg-sunken/60 p-3">
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-[11.5px] font-medium text-sub">Daily quota</span>
+        <span class="font-mono text-[10.5px] text-muted"><span class="js-quota-used">812</span> / <span class="js-quota-limit">1,000</span></span>
+      </div>
+      <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-line" role="progressbar" aria-label="Daily delivery quota used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="81" id="sidebar-quota-bar">
+        <div class="js-quota-fill h-full rounded-full bg-warning" style="width: 81%"></div>
+      </div>
+      <a href="../app/usage.html" class="mt-2.5 flex items-center gap-1 text-[11.5px] font-medium text-link hover:underline">
+        <span class="js-quota-percent">81</span>% used today <span aria-hidden="true">&middot;</span> View usage
+      </a>
+    </div>
+    <p class="mt-3 flex items-center justify-between px-0.5 text-[10.5px] text-muted">
+      <span>&copy; 2026 LazyTown</span>
+      <a href="../status.html" class="inline-flex items-center gap-1.5 hover:text-ink"><span class="dot text-success"></span>All systems</a>
+    </p>
+  </div>
+</aside>
+
+
+<div class="flex min-h-screen flex-col lg:pl-[264px]">
+  <header class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b border-line bg-canvas px-4 sm:gap-3 sm:px-6 lg:px-8">
+  <button type="button" class="btn btn-ghost btn-icon lg:hidden" data-sidebar-open aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+    <i data-lucide="menu" class="size-5"></i>
+  </button>
+
+  <div class="crumb hidden min-w-0 md:flex" aria-label="Breadcrumb">
+    <a href="../app/projects.html" class="hidden items-center gap-1.5 rounded px-1 py-0.5 hover:text-ink sm:inline-flex">
+      <i data-lucide="folder" class="size-3.5"></i>
+      <span class="js-project-name max-w-[160px] truncate">Acme Production</span>
+    </a>
+    <span class="hidden text-line-strong sm:inline" aria-hidden="true">/</span>
+    <span id="page-title" class="truncate font-medium text-ink">Overview</span>
+  </div>
+
+  <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
+    <button type="button" class="group hidden h-9 w-56 items-center gap-2 rounded-lg border border-line bg-surface px-2.5 text-left text-[13px] text-muted transition hover:border-line-strong hover:bg-sunken lg:flex xl:w-64" data-palette-open>
+      <i data-lucide="search" class="size-4"></i>
+      <span class="sr-only">Search pages and actions.</span>
+      <span class="flex-1">Search&hellip;</span>
+      <span class="kbd js-kbd hidden sm:inline-flex">Ctrl K</span>
+    </button>
+
+    <button type="button" class="btn btn-ghost btn-icon lg:hidden" data-palette-open aria-label="Search">
+      <i data-lucide="search" class="size-[18px]"></i>
+    </button>
+
+    <a href="../app/notifications.html" class="btn btn-ghost btn-icon relative hidden sm:inline-flex" aria-label="Notifications">
+      <i data-lucide="bell" class="size-[18px]"></i>
+      <span class="absolute right-2 top-2 size-1.5 rounded-full bg-accent ring-2 ring-canvas"></span>
+    </a>
+
+    <div class="relative" x-data="{
+        open: false,
+        mode: Mira.themeMode,
+        init() { window.addEventListener('mira:theme', (e) => { this.mode = e.detail; }); },
+        choose(m) { Mira.setTheme(m); this.mode = m; this.open = false; }
+      }" @click.outside="open = false" @keydown.escape.prevent="open = false">
+      <button type="button" class="btn btn-ghost btn-icon" @click="open = !open" :aria-expanded="open" aria-haspopup="menu" aria-label="Change theme">
+        <span x-show="mode !== 'dark'" x-cloak><i data-lucide="sun" class="size-[18px]"></i></span>
+        <span x-show="mode === 'dark'" x-cloak><i data-lucide="moon" class="size-[18px]"></i></span>
+        <span x-show="mode === 'system'" class="sr-only">System theme</span>
+      </button>
+      <div x-show="open" x-cloak x-transition.opacity.duration.120ms class="menu absolute right-0 top-[calc(100%+6px)]" role="menu" aria-label="Theme">
+        <p class="px-2.5 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted">Theme</p>
+        <button type="button" class="menu-item" role="menuitemradio" :aria-checked="mode === 'light'" @click="choose('light')">
+          <i data-lucide="sun"></i>Light
+          <span class="ml-auto" x-show="mode === 'light'"><i data-lucide="check" class="!size-3.5"></i></span>
+        </button>
+        <button type="button" class="menu-item" role="menuitemradio" :aria-checked="mode === 'dark'" @click="choose('dark')">
+          <i data-lucide="moon"></i>Dark
+          <span class="ml-auto" x-show="mode === 'dark'"><i data-lucide="check" class="!size-3.5"></i></span>
+        </button>
+        <button type="button" class="menu-item" role="menuitemradio" :aria-checked="mode === 'system'" @click="choose('system')">
+          <i data-lucide="monitor"></i>System
+          <span class="ml-auto" x-show="mode === 'system'"><i data-lucide="check" class="!size-3.5"></i></span>
+        </button>
+      </div>
+    </div>
+
+    <a href="../app/notifications.html?compose=1" class="btn btn-primary btn-sm hidden md:inline-flex">
+      <i data-lucide="send" class="size-[15px]"></i>Send notification
+    </a>
+
+    <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.prevent="open = false">
+      <button type="button" class="ml-0.5 flex items-center gap-2 rounded-lg p-0.5 transition hover:opacity-90" @click="open = !open" :aria-expanded="open" aria-haspopup="menu">
+        <span class="grid size-8 place-items-center rounded-full bg-ink text-[11px] font-semibold text-canvas">KS</span>
+        <span class="sr-only">Account menu</span>
+      </button>
+      <div x-show="open" x-cloak x-transition.opacity.duration.120ms class="menu absolute right-0 top-[calc(100%+8px)] !w-60" role="menu" aria-label="Account">
+        <div class="px-2.5 py-2">
+          <p class="text-[13px] font-semibold text-ink">Kabir Sharma</p>
+          <p class="truncate text-[11.5px] text-muted">kabir@acme.dev</p>
+        </div>
+        <div class="menu-sep"></div>
+        <a href="../app/settings.html" class="menu-item" role="menuitem"><i data-lucide="user"></i>Profile &amp; preferences</a>
+        <a href="../app/settings.html#security" class="menu-item" role="menuitem"><i data-lucide="shield-check"></i>Security</a>
+        <a href="../docs.html" class="menu-item" role="menuitem"><i data-lucide="book-open"></i>Documentation</a>
+        <div class="menu-sep"></div>
+        <a href="../login.html" class="menu-item" role="menuitem"><i data-lucide="log-out"></i>Sign out</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<dialog id="command-palette" class="modal max-w-xl" aria-labelledby="palette-title">
+  <h2 id="palette-title" class="sr-only">Search pages and actions</h2>
+  <div class="flex items-center gap-2 border-b border-line px-4">
+    <i data-lucide="search" class="size-4 shrink-0 text-muted"></i>
+    <label for="palette-input" class="sr-only">Search pages and actions</label>
+    <input id="palette-input" class="palette-input" type="text" placeholder="Jump to a page or run an action&hellip;" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="palette-results">
+    <span class="kbd shrink-0">ESC</span>
+  </div>
+  <div id="palette-results" class="max-h-[340px] overflow-y-auto p-2" role="listbox" aria-label="Results"></div>
+  <div class="flex items-center gap-4 border-t border-line bg-sunken/50 px-4 py-2 text-[11px] text-muted">
+    <span class="flex items-center gap-1"><span class="kbd">&uarr;</span><span class="kbd">&darr;</span>navigate</span>
+    <span class="flex items-center gap-1"><span class="kbd">&crarr;</span>select</span>
+  </div>
+</dialog>
+
+
+  <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-page space-y-5">
+
+      <div class="page-header">
+        <div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h1 class="text-[24px] font-semibold leading-tight tracking-[-0.03em]">Usage &amp; billing</h1>
+            <span class="badge badge-neutral">Free plan</span>
+          </div>
+          <p class="mt-1.5 text-[13.5px] text-muted">One notification to 100 subscribers consumes 100 delivery units &mdash; not one request.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="../docs.html#quotas" class="btn btn-secondary btn-sm"><i data-lucide="book-open" class="size-[15px]"></i>Quota docs</a>
+          <button type="button" class="btn btn-primary btn-sm" data-upgrade-open><i data-lucide="zap" class="size-[15px]"></i>Upgrade plan</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <section class="card xl:col-span-2" aria-labelledby="today-usage-title">
+          <div class="card-header">
+            <div>
+              <h2 id="today-usage-title" class="card-title">Today&rsquo;s usage</h2>
+              <p class="card-sub">Resets at 00:00 UTC &middot; in 6 hours</p>
+            </div>
+            <span class="badge badge-warning"><span class="dot"></span>Warning threshold reached</span>
+          </div>
+          <div class="card-body">
+            <div class="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
+              <div class="relative shrink-0">
+                <svg class="size-[148px] -rotate-90" viewBox="0 0 128 128" role="img" aria-label="812 of 1,000 daily delivery units used, 81 percent">
+                  <circle cx="64" cy="64" r="54" fill="none" stroke="rgb(var(--c-sunken))" stroke-width="10"/>
+                  <circle id="usage-ring" cx="64" cy="64" r="54" fill="none" stroke="currentColor" class="text-warning" stroke-width="10" stroke-linecap="round" stroke-dasharray="339.292" stroke-dashoffset="64.466"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-[27px] font-semibold leading-none tracking-[-0.03em] text-ink">81%</span>
+                  <span class="mt-1 text-[10.5px] uppercase tracking-[0.1em] text-muted">used today</span>
+                </div>
+              </div>
+              <div class="w-full flex-1">
+                <div class="flex items-end justify-between">
+                  <div>
+                    <p class="text-[12px] text-muted">Delivery units used</p>
+                    <p class="mt-1 font-mono text-[22px] font-medium tracking-[-0.02em] text-ink">812 <span class="text-[13px] text-muted">/ 1,000</span></p>
+                  </div>
+                  <p class="font-mono text-[11px] text-muted">188 remaining</p>
+                </div>
+                <div class="mt-3 h-2 overflow-hidden rounded-full bg-sunken" role="progressbar" aria-label="Daily quota used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="81">
+                  <div class="h-full rounded-full bg-warning" style="width: 81%"></div>
+                </div>
+                <dl class="mt-5 grid grid-cols-3 gap-3 border-t border-line pt-4">
+                  <div><dt class="text-[11px] text-muted">Accepted</dt><dd class="mt-0.5 font-mono text-[14px] text-ink">802</dd></div>
+                  <div><dt class="text-[11px] text-muted">Failed</dt><dd class="mt-0.5 font-mono text-[14px] text-ink">10</dd></div>
+                  <div><dt class="text-[11px] text-muted">Reserved</dt><dd class="mt-0.5 font-mono text-[14px] text-ink">0</dd></div>
+                </dl>
+                <p class="mt-4 flex items-start gap-2 rounded-lg bg-warning-soft p-3 text-[11.5px] leading-relaxed text-sub"><i data-lucide="triangle-alert" class="mt-0.5 size-3.5 shrink-0 text-warning"></i><span>At 80% Mira emits a <code class="inline-code">quota.warning</code> webhook. At 100% new sends are rejected with <code class="inline-code">429</code> until the daily reset.</span></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card flex flex-col" aria-labelledby="plan-title">
+          <div class="card-header">
+            <div>
+              <h2 id="plan-title" class="card-title">Current plan</h2>
+              <p class="card-sub">Free forever</p>
+            </div>
+            <span class="badge badge-primary">Free</span>
+          </div>
+          <div class="card-body flex flex-1 flex-col">
+            <p class="flex items-baseline gap-1"><span class="text-[30px] font-semibold tracking-[-0.04em] text-ink">$0</span><span class="text-[12.5px] text-muted">/ month</span></p>
+            <p class="mt-1 text-[12px] text-muted">1,000 delivery units per day, per project.</p>
+            <ul class="mt-4 space-y-2.5 border-t border-line pt-4">
+              <li class="flex items-start gap-2 text-[12px] text-sub"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>Web Push, FCM and APNs</li>
+              <li class="flex items-start gap-2 text-[12px] text-sub"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>2 projects on this plan</li>
+              <li class="flex items-start gap-2 text-[12px] text-sub"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>Delivery logs &middot; 7 days</li>
+              <li class="flex items-start gap-2 text-[12px] text-sub"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>1,000 subscribers per project</li>
+            </ul>
+            <button type="button" class="btn btn-primary btn-sm mt-5 w-full" data-upgrade-open>Upgrade</button>
+            <p class="mt-2 text-center text-[10.5px] text-muted">No card required</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="stat-card"><p class="stat-label"><i data-lucide="gauge" class="size-3.5"></i>Today</p><p class="stat-value">812</p><p class="stat-meta">81% of 1,000 units</p></div>
+        <div class="stat-card"><p class="stat-label"><i data-lucide="send" class="size-3.5"></i>Delivered · 30d</p><p class="stat-value">19,842</p><p class="stat-meta">across 128 notifications</p></div>
+        <div class="stat-card"><p class="stat-label"><i data-lucide="circle-x" class="size-3.5"></i>Failed · 30d</p><p class="stat-value">274</p><p class="stat-meta">1.36% of attempts</p></div>
+        <div class="stat-card"><p class="stat-label"><i data-lucide="activity" class="size-3.5"></i>Avg daily units</p><p class="stat-value">670</p><p class="stat-meta">67% of daily allowance</p></div>
+      </div>
+
+      <section class="card" aria-labelledby="usage-chart-title">
+        <div class="card-header">
+          <div>
+            <h2 id="usage-chart-title" class="card-title">Usage history</h2>
+            <p class="card-sub">Daily delivery units against the plan limit</p>
+          </div>
+          <span class="text-[11px] text-muted">Last 14 days</span>
+        </div>
+        <div class="p-5 pt-4"><div class="h-[250px]"><canvas id="chart-usage" aria-label="Bar chart of daily delivery units with the daily limit line"></canvas></div></div>
+      </section>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <section class="card xl:col-span-2" aria-labelledby="usage-history-title">
+          <div class="card-header">
+            <div>
+              <h2 id="usage-history-title" class="card-title">Daily breakdown</h2>
+              <p class="card-sub">Newest first</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="export-usage"><i data-lucide="download" class="size-3.5"></i>Export CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table min-w-[520px]">
+              <caption class="sr-only">Daily usage history</caption>
+              <thead><tr><th scope="col">Date</th><th scope="col" class="text-right">Units</th><th scope="col" class="text-right">% of quota</th><th scope="col">Status</th></tr></thead>
+              <tbody id="usage-history-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="billing-title">
+          <div class="card-header">
+            <div>
+              <h2 id="billing-title" class="card-title">Billing history</h2>
+              <p class="card-sub">Invoices and receipts</p>
+            </div>
+          </div>
+          <div class="empty-state !py-10">
+            <span class="empty-icon"><i data-lucide="receipt" class="size-5"></i></span>
+            <p class="text-[13px] font-medium text-ink">No invoices yet</p>
+            <p class="mt-1 max-w-[220px] text-[11.5px] leading-relaxed text-muted">You&rsquo;re on the Free plan. Invoices appear here after your first paid billing cycle.</p>
+            <button type="button" class="btn btn-secondary btn-sm mt-4" data-upgrade-open>Compare plans</button>
+          </div>
+        </section>
+      </div>
+
+      <section class="card card-body" aria-labelledby="quota-rules-title">
+        <h2 id="quota-rules-title" class="text-[14px] font-semibold text-ink">How quota accounting works</h2>
+        <div class="mt-3 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-lg border border-line bg-sunken/40 p-3"><p class="flex items-center gap-1.5 text-[11.5px] font-medium text-ink"><i data-lucide="lock" class="size-3.5 text-muted"></i>Reserved atomically</p><p class="mt-1 text-[11px] leading-relaxed text-muted">Concurrent requests cannot overspend. Units are reserved inside a transaction before jobs are dispatched.</p></div>
+          <div class="rounded-lg border border-line bg-sunken/40 p-3"><p class="flex items-center gap-1.5 text-[11.5px] font-medium text-ink"><i data-lucide="refresh-cw" class="size-3.5 text-muted"></i>Retries are free</p><p class="mt-1 text-[11px] leading-relaxed text-muted">A retry reuses the original reservation. Failed attempts never consume quota twice.</p></div>
+          <div class="rounded-lg border border-line bg-sunken/40 p-3"><p class="flex items-center gap-1.5 text-[11.5px] font-medium text-ink"><i data-lucide="calendar" class="size-3.5 text-muted"></i>Daily reset</p><p class="mt-1 text-[11px] leading-relaxed text-muted">Allowance resets at 00:00 UTC. Unused units do not roll over.</p></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- Upgrade -->
+<dialog id="upgrade-dialog" class="modal modal-wide" aria-labelledby="upgrade-title">
+  <div class="modal-header">
+    <div>
+      <h2 id="upgrade-title" class="text-[16px] font-semibold tracking-[-0.02em]">Upgrade your plan</h2>
+      <p class="mt-0.5 text-[12.5px] text-muted">More daily units, longer log retention and higher limits.</p>
+    </div>
+    <button type="button" class="btn btn-ghost btn-icon !size-8" data-dialog-close aria-label="Close dialog"><i data-lucide="x" class="size-4"></i></button>
+  </div>
+  <div class="modal-body">
+    <div class="grid gap-3 sm:grid-cols-2">
+      <label class="relative flex cursor-pointer flex-col rounded-xl border border-line p-4 transition hover:bg-sunken/50 has-[:checked]:border-primary has-[:checked]:bg-primary-soft/40">
+        <input type="radio" name="plan" value="Growth" class="sr-only" checked>
+        <span class="flex items-center justify-between"><span class="text-[13px] font-semibold text-ink">Growth</span><span class="badge badge-primary">Popular</span></span>
+        <span class="mt-2 flex items-baseline gap-1"><span class="text-[24px] font-semibold tracking-[-0.03em]">$19</span><span class="text-[11.5px] text-muted">/ month</span></span>
+        <span class="mt-1 text-[11.5px] text-muted">50,000 units / day</span>
+        <span class="mt-3 space-y-1.5 border-t border-line pt-3 text-[11.5px] text-sub">
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>10 projects</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>30-day delivery logs</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>Webhooks &amp; analytics</span>
+        </span>
+      </label>
+      <label class="relative flex cursor-pointer flex-col rounded-xl border border-line p-4 transition hover:bg-sunken/50 has-[:checked]:border-primary has-[:checked]:bg-primary-soft/40">
+        <input type="radio" name="plan" value="Scale" class="sr-only">
+        <span class="flex items-center justify-between"><span class="text-[13px] font-semibold text-ink">Scale</span><span class="badge badge-neutral">Teams</span></span>
+        <span class="mt-2 flex items-baseline gap-1"><span class="text-[24px] font-semibold tracking-[-0.03em]">$99</span><span class="text-[11.5px] text-muted">/ month</span></span>
+        <span class="mt-1 text-[11.5px] text-muted">500,000 units / day</span>
+        <span class="mt-3 space-y-1.5 border-t border-line pt-3 text-[11.5px] text-sub">
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>Unlimited projects</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>90-day delivery logs</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>Priority queue workers</span>
+        </span>
+      </label>
+    </div>
+    <div class="mt-4 flex items-start gap-2 rounded-lg border border-line bg-sunken/60 p-3">
+      <i data-lucide="info" class="mt-0.5 size-3.5 shrink-0 text-muted"></i>
+      <p class="text-[11.5px] leading-relaxed text-sub">This is a frontend preview. No payment is collected and no plan is changed.</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm" data-dialog-close>Not now</button>
+    <button type="button" class="btn btn-primary btn-sm" id="start-trial"><i data-lucide="zap" class="size-[15px]"></i>Start 14-day trial</button>
+  </div>
+</dialog>
+
+<div id="toast-region" class="pointer-events-none fixed bottom-4 right-4 z-[80] flex w-[calc(100vw-2rem)] max-w-sm flex-col gap-2" role="region" aria-label="Notifications" aria-live="polite" aria-atomic="false"></div>
+
+<script src="../assets/vendor/chart.umd.js"></script>
+<script src="../assets/js/data.js"></script>
+<script src="../assets/js/charts.js"></script>
+<script src="../assets/js/ui.js"></script>
+<script src="../assets/js/app.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!-- @title API keys · Mira -->
+<!-- @desc Create scoped secret and publishable keys for your project. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="api-keys" data-title="API keys">
+<!-- @include partials/sprite.html -->
+<!-- @include partials/sidebar.html -->
+
+<div class="flex min-h-screen flex-col lg:pl-[264px]">
+  <!-- @include partials/topbar.html -->
+
+  <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-page space-y-5">
+
+      <div class="page-header">
+        <div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h1 class="text-[24px] font-semibold leading-tight tracking-[-0.03em]">API keys</h1>
+            <span class="badge badge-neutral">4 keys</span>
+          </div>
+          <p class="mt-1.5 text-[13.5px] text-muted">Project-scoped credentials for server and browser integrations.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="../docs.html#authentication" class="btn btn-secondary btn-sm"><i data-lucide="book-open" class="size-[15px]"></i>Authentication guide</a>
+          <button type="button" class="btn btn-primary btn-sm" data-key-create><i data-lucide="plus" class="size-[15px]"></i>Create key</button>
+        </div>
+      </div>
+
+      <div class="grid gap-3 lg:grid-cols-2">
+        <div class="flex items-start gap-3 rounded-xl border border-line bg-surface p-4 shadow-card">
+          <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-primary-soft text-link"><i data-lucide="key-round" class="size-4"></i></span>
+          <div>
+            <p class="text-[12.5px] font-semibold text-ink">Secret keys stay server-side</p>
+            <p class="mt-1 text-[11.5px] leading-relaxed text-sub">Used as <code class="inline-code">Authorization: Bearer mira_sk_live_…</code>. They are hashed with HMAC-SHA256 and a server-side pepper &mdash; never stored as plaintext.</p>
+          </div>
+        </div>
+        <div class="flex items-start gap-3 rounded-xl border border-line bg-surface p-4 shadow-card">
+          <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-sunken text-muted"><i data-lucide="globe" class="size-4"></i></span>
+          <div>
+            <p class="text-[12.5px] font-semibold text-ink">Publishable keys are public by design</p>
+            <p class="mt-1 text-[11.5px] leading-relaxed text-sub">Limited to subscriber registration. A publishable key can never send notifications or read sensitive project data.</p>
+          </div>
+        </div>
+      </div>
+
+      <section class="card" aria-labelledby="keys-title">
+        <div class="card-header">
+          <div>
+            <h2 id="keys-title" class="card-title">Project keys</h2>
+            <p class="card-sub">4 keys &middot; 3 active</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="hidden items-center gap-1.5 text-[11px] text-muted sm:inline-flex"><span class="dot text-success"></span>Live</span>
+            <span class="hidden items-center gap-1.5 text-[11px] text-muted sm:inline-flex"><span class="dot text-warning"></span>Test</span>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table min-w-[940px]">
+            <caption class="sr-only">API keys for this project</caption>
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Key</th>
+                <th scope="col">Environment</th>
+                <th scope="col">Scopes</th>
+                <th scope="col">Last used</th>
+                <th scope="col">Status</th>
+                <th scope="col"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="keys-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <section class="card overflow-hidden" aria-labelledby="auth-example-title">
+          <div class="card-header">
+            <div>
+              <h2 id="auth-example-title" class="card-title">Authenticate a request</h2>
+              <p class="card-sub">Never pass keys through query parameters</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" data-copy-target="#auth-code"><i data-lucide="copy" class="size-3.5"></i>Copy</button>
+          </div>
+          <div class="p-4">
+            <div class="code-block">
+              <pre><code id="auth-code"><span class="token-com"># List subscribers</span>
+<span class="token-fn">curl</span> https://api.lazytown.dev/v1/subscribers \
+  -H <span class="token-str">"Authorization: Bearer mira_sk_live_…f9a2"</span> \
+  -H <span class="token-str">"Accept: application/json"</span>
+
+<span class="token-com"># 200 OK</span>
+{
+  <span class="token-key">"data"</span>: [ { <span class="token-key">"id"</span>: <span class="token-str">"sub_01J46A07"</span>, <span class="token-key">"platform"</span>: <span class="token-str">"web"</span>, … } ],
+  <span class="token-key">"meta"</span>: { <span class="token-key">"next_cursor"</span>: <span class="token-key">null</span>, <span class="token-key">"request_id"</span>: <span class="token-str">"req_8f31c2"</span> }
+}</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="scopes-title">
+          <div class="card-header">
+            <div>
+              <h2 id="scopes-title" class="card-title">Available scopes</h2>
+              <p class="card-sub">Grant the minimum your integration needs</p>
+            </div>
+          </div>
+          <div class="card-body pt-3">
+            <dl class="space-y-2.5">
+              <div class="flex items-start justify-between gap-4"><dt class="font-mono text-[11.5px] text-ink">notifications:send</dt><dd class="text-[11.5px] text-muted">Create and send</dd></div>
+              <div class="flex items-start justify-between gap-4"><dt class="font-mono text-[11.5px] text-ink">notifications:read</dt><dd class="text-[11.5px] text-muted">Read notifications</dd></div>
+              <div class="flex items-start justify-between gap-4"><dt class="font-mono text-[11.5px] text-ink">subscribers:read</dt><dd class="text-[11.5px] text-muted">List subscribers</dd></div>
+              <div class="flex items-start justify-between gap-4"><dt class="font-mono text-[11.5px] text-ink">subscribers:write</dt><dd class="text-[11.5px] text-muted">Register / update / remove</dd></div>
+              <div class="flex items-start justify-between gap-4"><dt class="font-mono text-[11.5px] text-ink">usage:read</dt><dd class="text-[11.5px] text-muted">Quota and usage</dd></div>
+              <div class="flex items-start justify-between gap-4"><dt class="font-mono text-[11.5px] text-ink">webhooks:manage</dt><dd class="text-[11.5px] text-muted">Create / update endpoints</dd></div>
+              <div class="flex items-start justify-between gap-4"><dt class="font-mono text-[11.5px] text-ink">project:read</dt><dd class="text-[11.5px] text-muted">Project metadata</dd></div>
+            </dl>
+          </div>
+          <div class="border-t border-line bg-sunken/40 px-5 py-3">
+            <p class="text-[11px] leading-relaxed text-muted">Rate limit and quota checks run before any request is processed. Exceeding either returns a clear JSON error.</p>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Create key -->
+<dialog id="key-dialog" class="modal" aria-labelledby="key-dialog-title">
+  <form id="key-form" novalidate>
+    <div class="modal-header">
+      <div>
+        <h2 id="key-dialog-title" class="text-[16px] font-semibold tracking-[-0.02em]">Create API key</h2>
+        <p class="mt-0.5 text-[12.5px] text-muted">Secret keys are displayed exactly once.</p>
+      </div>
+      <button type="button" class="btn btn-ghost btn-icon !size-8" data-dialog-close aria-label="Close dialog"><i data-lucide="x" class="size-4"></i></button>
+    </div>
+
+    <div id="key-step-form">
+      <div class="modal-body space-y-4">
+        <div>
+          <label class="label" for="key-name">Key name</label>
+          <input class="input" id="key-name" name="name" type="text" placeholder="Production worker" required data-autofocus>
+          <p class="error-text hidden" data-error-for="key-name"><i data-lucide="alert-circle" class="size-3.5 shrink-0"></i>Give the key a recognisable name.</p>
+        </div>
+
+        <fieldset>
+          <legend class="label">Key type</legend>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <label class="flex cursor-pointer items-start gap-2.5 rounded-lg border border-line p-3 transition hover:bg-sunken has-[:checked]:border-primary has-[:checked]:bg-primary-soft/50">
+              <input type="radio" name="keyType" value="secret" class="mt-0.5 accent-primary" checked>
+              <span><span class="flex items-center gap-1.5 text-[13px] font-medium text-ink"><i data-lucide="server" class="size-3.5 text-muted"></i>Secret</span><span class="mt-0.5 block text-[11px] leading-relaxed text-muted">Backend requests. Granular scopes.</span></span>
+            </label>
+            <label class="flex cursor-pointer items-start gap-2.5 rounded-lg border border-line p-3 transition hover:bg-sunken has-[:checked]:border-primary has-[:checked]:bg-primary-soft/50">
+              <input type="radio" name="keyType" value="publishable" class="mt-0.5 accent-primary">
+              <span><span class="flex items-center gap-1.5 text-[13px] font-medium text-ink"><i data-lucide="globe" class="size-3.5 text-muted"></i>Publishable</span><span class="mt-0.5 block text-[11px] leading-relaxed text-muted">Browser-side registration only.</span></span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend class="label">Environment</legend>
+          <div class="segmented w-full !p-1" role="group" aria-label="Key environment">
+            <label class="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[12.5px] font-medium text-sub has-[:checked]:bg-surface has-[:checked]:text-ink has-[:checked]:shadow-card">
+              <input type="radio" name="keyEnv" value="live" class="sr-only" checked><span class="dot text-success"></span>Live
+            </label>
+            <label class="flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md px-3 py-1.5 text-[12.5px] font-medium text-sub has-[:checked]:bg-surface has-[:checked]:text-ink has-[:checked]:shadow-card">
+              <input type="radio" name="keyEnv" value="test" class="sr-only"><span class="dot text-warning"></span>Test
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset id="key-scopes-fieldset">
+          <div class="flex items-center justify-between">
+            <legend class="label mb-0">Scopes</legend>
+            <button type="button" class="text-[11px] font-medium text-link hover:underline" id="toggle-all-scopes">Select all</button>
+          </div>
+          <div class="mt-2 grid gap-1.5 sm:grid-cols-2">
+            <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="scope" value="notifications:send" checked><span class="font-mono">notifications:send</span></label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="scope" value="notifications:read" checked><span class="font-mono">notifications:read</span></label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="scope" value="subscribers:read" checked><span class="font-mono">subscribers:read</span></label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="scope" value="subscribers:write" checked><span class="font-mono">subscribers:write</span></label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="scope" value="usage:read" checked><span class="font-mono">usage:read</span></label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="scope" value="webhooks:manage"><span class="font-mono">webhooks:manage</span></label>
+            <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="scope" value="project:read"><span class="font-mono">project:read</span></label>
+          </div>
+          <p class="hint" id="key-scopes-hint">Scopes are enforced on every request before processing.</p>
+          <p class="error-text hidden" data-error-for="key-scopes"><i data-lucide="alert-circle" class="size-3.5 shrink-0"></i>Select at least one scope.</p>
+        </fieldset>
+
+        <div>
+          <label class="label" for="key-expiry">Expiration</label>
+          <select class="select" id="key-expiry" name="expiry">
+            <option value="never">Never expires</option>
+            <option value="30">30 days</option>
+            <option value="90">90 days</option>
+            <option value="365">1 year</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dialog-close>Cancel</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="key-round" class="size-[15px]"></i>Generate key</button>
+      </div>
+    </div>
+
+    <div id="key-step-reveal" class="hidden">
+      <div class="modal-body space-y-4">
+        <div class="flex items-start gap-3 rounded-lg border border-success/25 bg-success-soft p-3">
+          <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-success/10 text-success"><i data-lucide="check" class="size-4"></i></span>
+          <div>
+            <p class="text-[13px] font-semibold text-ink">Key created</p>
+            <p class="mt-0.5 text-[11.5px] leading-relaxed text-sub">Copy it now. For security, Mira cannot show this secret again &mdash; only a hash is stored server-side.</p>
+          </div>
+        </div>
+        <div>
+          <p class="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">Your new key</p>
+          <div class="flex items-stretch gap-2">
+            <code id="generated-key" class="flex-1 select-all break-all rounded-lg border border-line bg-sunken px-3 py-2.5 font-mono text-[11.5px] leading-relaxed text-ink">mira_sk_live_…</code>
+            <button type="button" class="btn btn-secondary btn-sm shrink-0" data-copy-target="#generated-key"><i data-lucide="copy" class="size-3.5"></i>Copy</button>
+          </div>
+        </div>
+        <div class="rounded-lg border border-warning/30 bg-warning-soft p-3">
+          <p class="flex items-start gap-2 text-[11.5px] leading-relaxed text-sub"><i data-lucide="triangle-alert" class="mt-0.5 size-3.5 shrink-0 text-warning"></i><span><span class="font-semibold text-ink">Store secrets in environment variables.</span> Never commit a secret key, ship it to the browser, or share it in client-side code.</span></p>
+        </div>
+        <dl class="grid grid-cols-2 gap-3 border-t border-line pt-3 text-[11.5px]">
+          <div><dt class="text-muted">Name</dt><dd class="mt-0.5 font-medium text-ink" data-generated-name>—</dd></div>
+          <div><dt class="text-muted">Environment</dt><dd class="mt-0.5 font-mono text-ink" data-generated-env>—</dd></div>
+          <div><dt class="text-muted">Scopes</dt><dd class="mt-0.5 text-ink" data-generated-scopes>—</dd></div>
+          <div><dt class="text-muted">Expires</dt><dd class="mt-0.5 text-ink" data-generated-expiry>—</dd></div>
+        </dl>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary btn-sm" id="key-done">Done</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<!-- @include partials/app-scripts.html -->
+</body>
+</html>

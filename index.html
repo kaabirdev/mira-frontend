@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mira — Push Notification Infrastructure by LazyTown</title>
+  <meta name="description" content="One REST API for Web Push, Android and iOS. Queues, retries, quotas, delivery logs and signed webhooks for developers.">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#080d17" media="(prefers-color-scheme: dark)">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Mira — Push Notification Infrastructure by LazyTown">
+  <meta property="og:description" content="One REST API for Web Push, Android and iOS. Queues, retries, quotas, delivery logs and signed webhooks for developers.">
+  <meta property="og:site_name" content="Mira">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/app.css">
+
+  <script>
+    window.MIRA_BASE = '';
+    (function () {
+      try {
+        var mode = localStorage.getItem('mira-theme') || 'system';
+        var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.classList.add('js');
+      } catch (e) {}
+    })();
+  </script>
+
+  <script defer src="assets/vendor/alpine.min.js"></script>
+  <script defer src="assets/vendor/lucide.min.js"></script>
+</head>
+
+<body class="bg-canvas" data-page="home">
+<svg xmlns="http://www.w3.org/2000/svg" class="absolute size-0 overflow-hidden" aria-hidden="true" focusable="false">
+  <symbol id="mira-mark" viewBox="0 0 32 32">
+    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+      <path d="M10 21.5a8.5 8.5 0 0 1 8.5-8.5"/>
+      <path d="M10 26.5a13.5 13.5 0 0 1 13.5-13.5" opacity=".55"/>
+    </g>
+    <circle cx="10" cy="21.5" r="2.3" fill="currentColor"/>
+  </symbol>
+</svg>
+
+
+<header class="sticky top-0 z-40 border-b border-line bg-canvas/95">
+  <div class="container-page flex h-16 items-center gap-3">
+    <a href="index.html" class="flex items-center gap-2.5 rounded-lg" aria-label="mira by LazyTown — home">
+      <span class="brand-mark size-8"><svg class="size-5" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+      <span class="text-[19px] font-bold leading-none tracking-[-0.045em] text-ink">mira</span>
+    </a>
+    <span class="ml-1 hidden rounded border border-line px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-wider text-muted sm:inline">by LazyTown</span>
+
+    <nav class="ml-6 hidden items-center gap-0.5 lg:flex" aria-label="Main">
+      <a href="#product" class="nav-link">Product</a>
+      <a href="#delivery" class="nav-link">Delivery</a>
+      <a href="#developers" class="nav-link">Developers</a>
+      <a href="#pricing" class="nav-link">Pricing</a>
+      <a href="docs.html" class="nav-link">Docs</a>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1.5">
+      <button type="button" class="btn btn-ghost btn-icon" data-theme-toggle aria-label="Toggle color theme">
+        <i data-lucide="sun-moon" class="size-[18px]"></i>
+      </button>
+      <a href="login.html" class="btn btn-ghost btn-sm hidden sm:inline-flex">Sign in</a>
+      <a href="app/index.html" class="btn btn-primary btn-sm">Start free<i data-lucide="arrow-right" class="size-3.5"></i></a>
+      <button type="button" class="btn btn-ghost btn-icon lg:hidden" aria-label="Open menu" aria-controls="mobile-nav" :aria-expanded="open" x-data="{ open: false }" @click="open = !open">
+        <i data-lucide="menu" class="size-5"></i>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-nav" class="border-t border-line bg-canvas px-4 py-3 lg:hidden" x-data="{ open: false }" x-show="open" x-cloak>
+    <nav class="flex flex-col gap-0.5" aria-label="Mobile">
+      <a href="#product" class="nav-link" @click="open = false">Product</a>
+      <a href="#delivery" class="nav-link" @click="open = false">Delivery</a>
+      <a href="#developers" class="nav-link" @click="open = false">Developers</a>
+      <a href="#pricing" class="nav-link" @click="open = false">Pricing</a>
+      <a href="docs.html" class="nav-link">Docs</a>
+      <a href="login.html" class="nav-link">Sign in</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="grid-pattern pointer-events-none absolute inset-x-0 top-0 h-[560px]" aria-hidden="true"></div>
+    <div class="container-page relative grid items-center gap-12 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
+      <div>
+        <span class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1 text-[11.5px] font-medium text-sub shadow-card">
+          <span class="dot text-success"></span>Push Notification Infrastructure
+          <span class="text-line-strong">/</span>By LazyTown
+        </span>
+        <h1 class="mt-5 text-[40px] font-bold leading-[1.02] tracking-[-0.045em] sm:text-[52px] lg:text-[58px]">
+          Push notifications,<br class="hidden sm:block"> without the <span class="text-link">infrastructure.</span>
+        </h1>
+        <p class="mt-5 max-w-xl text-[15.5px] leading-relaxed text-sub">
+          One REST API for Web Push, Android and iOS. Mira handles provider integrations, async queues, retries, quota reservations, delivery logs and signed webhooks &mdash; so you can ship the notification, not the plumbing.
+        </p>
+        <div class="mt-7 flex flex-wrap items-center gap-3">
+          <a href="app/index.html" class="btn btn-primary btn-lg">Start free<i data-lucide="arrow-right" class="size-4"></i></a>
+          <a href="docs.html" class="btn btn-secondary btn-lg"><i data-lucide="book-open" class="size-4"></i>Read the docs</a>
+        </div>
+        <p class="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[11.5px] text-muted">
+          <span class="inline-flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>1,000 free units / day</span>
+          <span class="inline-flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>No SDK required</span>
+          <span class="inline-flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>OpenAPI 3.1</span>
+        </p>
+
+        <dl class="mt-9 grid max-w-lg grid-cols-3 gap-4 border-t border-line pt-6">
+          <div><dt class="text-[10.5px] uppercase tracking-[0.08em] text-muted">Free tier</dt><dd class="mt-1 text-[15px] font-semibold text-ink">1,000<span class="text-[11px] font-medium text-muted">/day</span></dd></div>
+          <div><dt class="text-[10.5px] uppercase tracking-[0.08em] text-muted">Channels</dt><dd class="mt-1 text-[15px] font-semibold text-ink">Web &middot; Android &middot; iOS</dd></div>
+          <div><dt class="text-[10.5px] uppercase tracking-[0.08em] text-muted">Delivery</dt><dd class="mt-1 text-[15px] font-semibold text-ink">Async &amp; retried</dd></div>
+        </dl>
+      </div>
+
+      <div class="relative" data-reveal>
+        <div class="code-block shadow-pop">
+          <div class="flex items-center justify-between border-b border-[#1e2a3f] px-4 py-2.5">
+            <div class="flex items-center gap-1.5">
+              <span class="size-2 rounded-full bg-[#2b3a52]"></span>
+              <span class="size-2 rounded-full bg-[#2b3a52]"></span>
+              <span class="size-2 rounded-full bg-[#2b3a52]"></span>
+              <span class="ml-2 font-mono text-[10.5px] text-[#8ba0bb]">notifications.sh</span>
+            </div>
+            <span class="rounded bg-[#10281b] px-1.5 py-0.5 font-mono text-[10px] text-[#86efac]">201 Created</span>
+          </div>
+          <pre class="!p-4 !text-[11.5px]"><code><span class="token-fn">curl</span> https://api.lazytown.dev/v1/notifications \
+  -H <span class="token-str">"Authorization: Bearer mira_sk_live_…"</span> \
+  -H <span class="token-str">"Content-Type: application/json"</span> \
+  -d <span class="token-str">'{
+    "title": "New dashboard is live",
+    "body": "Charts and delivery logs are here.",
+    "url": "https://acme.dev/changelog",
+    "target": { "type": "segment", "id": "seg_active_web" }
+  }'</span>
+
+<span class="token-com">// 201 Created · req_8f31c2</span>
+{
+  <span class="token-key">"id"</span>: <span class="token-str">"ntf_01JCH4K9X2"</span>,
+  <span class="token-key">"status"</span>: <span class="token-str">"queued"</span>,
+  <span class="token-key">"reserved_units"</span>: <span class="token-num">840</span>
+}</code></pre>
+        </div>
+
+        <div class="mt-3 grid gap-3 sm:grid-cols-[1.25fr_0.75fr]">
+          <div class="card flex items-center gap-3 p-3.5">
+            <span class="grid size-9 shrink-0 place-items-center rounded-lg bg-success-soft text-success"><i data-lucide="check-check" class="size-[18px]"></i></span>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center justify-between gap-2"><p class="text-[11.5px] font-semibold text-ink">Provider accepted</p><span class="font-mono text-[10px] text-muted">836 / 840</span></div>
+              <div class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-sunken"><div class="h-full w-[99.5%] rounded-full bg-success"></div></div>
+              <p class="mt-1.5 text-[10px] text-muted">4 failed · retried with backoff</p>
+            </div>
+          </div>
+          <div class="card flex items-center gap-2.5 p-3.5">
+            <span class="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-link"><i data-lucide="zap" class="size-[18px]"></i></span>
+            <div><p class="font-mono text-[15px] font-semibold text-ink">~12s</p><p class="text-[10px] text-muted">to full fan-out</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Platform strip -->
+  <section class="border-y border-line bg-surface">
+    <div class="container-page flex flex-wrap items-center gap-x-8 gap-y-3 py-4">
+      <span class="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted">Built on</span>
+      <span class="flex items-center gap-2 text-[12px] font-medium text-sub"><i data-lucide="globe" class="size-4 text-muted"></i>Web Push &middot; VAPID</span>
+      <span class="flex items-center gap-2 text-[12px] font-medium text-sub"><i data-lucide="flame" class="size-4 text-muted"></i>Firebase Cloud Messaging</span>
+      <span class="flex items-center gap-2 text-[12px] font-medium text-sub"><i data-lucide="apple" class="size-4 text-muted"></i>Apple Push Notification service</span>
+      <span class="hidden h-4 w-px bg-line sm:block"></span>
+      <span class="flex items-center gap-2 text-[12px] font-medium text-sub"><i data-lucide="server" class="size-4 text-muted"></i>Laravel &amp; MySQL</span>
+      <span class="ml-auto hidden font-mono text-[10.5px] text-muted md:inline">REST / OpenAPI 3.1</span>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section id="product" class="scroll-mt-20 py-20">
+    <div class="container-page">
+      <div class="max-w-2xl" data-reveal>
+        <p class="text-[10.5px] font-semibold uppercase tracking-[0.13em] text-link">Product</p>
+        <h2 class="mt-3 text-[30px] font-semibold tracking-[-0.035em] sm:text-[36px]">Everything around the send.</h2>
+        <p class="mt-3 text-[14.5px] leading-relaxed text-sub">Notification infrastructure is more than a POST request. Mira covers the queues, isolation, accounting and observability that production apps eventually need.</p>
+      </div>
+
+      <div class="mt-10 grid gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3">
+        <article class="bg-surface p-5 transition-colors hover:bg-sunken/40" data-reveal>
+          <span class="grid size-9 place-items-center rounded-lg border border-line bg-sunken text-sub"><i data-lucide="boxes" class="size-[18px]"></i></span>
+          <h3 class="mt-4 text-[14.5px] font-semibold text-ink">Isolated projects</h3>
+          <p class="mt-1.5 text-[12.5px] leading-relaxed text-sub">Every project owns its subscribers, keys, delivery records, webhooks and quota. Ownership is checked on every request.</p>
+        </article>
+        <article class="bg-surface p-5 transition-colors hover:bg-sunken/40" data-reveal data-reveal-delay="40">
+          <span class="grid size-9 place-items-center rounded-lg border border-line bg-sunken text-sub"><i data-lucide="braces" class="size-[18px]"></i></span>
+          <h3 class="mt-4 text-[14.5px] font-semibold text-ink">One REST API</h3>
+          <p class="mt-1.5 text-[12.5px] leading-relaxed text-sub">Register subscribers and send notifications over HTTPS. No proprietary SDK, no vendor lock-in, documented with OpenAPI 3.1.</p>
+        </article>
+        <article class="bg-surface p-5 transition-colors hover:bg-sunken/40" data-reveal data-reveal-delay="80">
+          <span class="grid size-9 place-items-center rounded-lg border border-line bg-sunken text-sub"><i data-lucide="waypoints" class="size-[18px]"></i></span>
+          <h3 class="mt-4 text-[14.5px] font-semibold text-ink">Async by default</h3>
+          <p class="mt-1.5 text-[12.5px] leading-relaxed text-sub">Separate queues for Web Push, FCM, APNs and webhooks. Retries with exponential backoff, without duplicate deliveries.</p>
+        </article>
+        <article class="bg-surface p-5 transition-colors hover:bg-sunken/40" data-reveal>
+          <span class="grid size-9 place-items-center rounded-lg border border-line bg-sunken text-sub"><i data-lucide="scroll-text" class="size-[18px]"></i></span>
+          <h3 class="mt-4 text-[14.5px] font-semibold text-ink">Delivery truth</h3>
+          <p class="mt-1.5 text-[12.5px] leading-relaxed text-sub">Pending, queued, processing, accepted, failed, expired. Mira never claims provider acceptance means the device displayed it.</p>
+        </article>
+        <article class="bg-surface p-5 transition-colors hover:bg-sunken/40" data-reveal data-reveal-delay="40">
+          <span class="grid size-9 place-items-center rounded-lg border border-line bg-sunken text-sub"><i data-lucide="gauge" class="size-[18px]"></i></span>
+          <h3 class="mt-4 text-[14.5px] font-semibold text-ink">Quotas that hold</h3>
+          <p class="mt-1.5 text-[12.5px] leading-relaxed text-sub">Delivery units are reserved atomically before jobs are queued. Concurrent requests cannot overspend the daily allowance.</p>
+        </article>
+        <article class="bg-surface p-5 transition-colors hover:bg-sunken/40" data-reveal data-reveal-delay="80">
+          <span class="grid size-9 place-items-center rounded-lg border border-line bg-sunken text-sub"><i data-lucide="webhook" class="size-[18px]"></i></span>
+          <h3 class="mt-4 text-[14.5px] font-semibold text-ink">Signed webhooks</h3>
+          <p class="mt-1.5 text-[12.5px] leading-relaxed text-sub">HMAC-SHA256 signatures, event IDs, replay protection, delivery history and automatic retries on a dedicated queue.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Delivery pipeline -->
+  <section id="delivery" class="scroll-mt-20 border-y border-line bg-surface py-20">
+    <div class="container-page">
+      <div class="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+        <div data-reveal>
+          <p class="text-[10.5px] font-semibold uppercase tracking-[0.13em] text-link">Delivery</p>
+          <h2 class="mt-3 text-[30px] font-semibold tracking-[-0.035em] sm:text-[36px]">A pipeline you can audit.</h2>
+          <p class="mt-3 max-w-md text-[14px] leading-relaxed text-sub">From authentication to provider response, every stage is recorded. When a notification fails, you get the provider error and the attempt count &mdash; not a generic failure.</p>
+          <div class="mt-6 space-y-3">
+            <div class="flex items-start gap-2.5"><i data-lucide="check" class="mt-0.5 size-4 shrink-0 text-success"></i><p class="text-[12.5px] leading-relaxed text-sub"><span class="font-medium text-ink">Quota reserved before queueing.</span> Failed sends are returned to the balance.</p></div>
+            <div class="flex items-start gap-2.5"><i data-lucide="check" class="mt-0.5 size-4 shrink-0 text-success"></i><p class="text-[12.5px] leading-relaxed text-sub"><span class="font-medium text-ink">Idempotency built in.</span> Reuse a key to safely retry a request without duplicate sends.</p></div>
+            <div class="flex items-start gap-2.5"><i data-lucide="check" class="mt-0.5 size-4 shrink-0 text-success"></i><p class="text-[12.5px] leading-relaxed text-sub"><span class="font-medium text-ink">Invalid tokens cleaned up.</span> Expired subscriptions stop consuming your quota.</p></div>
+          </div>
+        </div>
+
+        <div class="grid gap-3 sm:grid-cols-2" data-reveal>
+          <div class="rounded-xl border border-line bg-canvas p-4">
+            <div class="flex items-center justify-between"><span class="font-mono text-[10px] text-muted">01</span><i data-lucide="shield-check" class="size-4 text-muted"></i></div>
+            <h3 class="mt-3 text-[13px] font-semibold text-ink">Authenticate</h3>
+            <p class="mt-1 text-[11.5px] leading-relaxed text-muted">Validate the key, project, scope, rate limit and quota before processing.</p>
+          </div>
+          <div class="rounded-xl border border-line bg-canvas p-4">
+            <div class="flex items-center justify-between"><span class="font-mono text-[10px] text-muted">02</span><i data-lucide="lock" class="size-4 text-muted"></i></div>
+            <h3 class="mt-3 text-[13px] font-semibold text-ink">Reserve quota</h3>
+            <p class="mt-1 text-[11.5px] leading-relaxed text-muted">One unit per target device, reserved atomically inside a transaction.</p>
+          </div>
+          <div class="rounded-xl border border-line bg-canvas p-4">
+            <div class="flex items-center justify-between"><span class="font-mono text-[10px] text-muted">03</span><i data-lucide="layers" class="size-4 text-muted"></i></div>
+            <h3 class="mt-3 text-[13px] font-semibold text-ink">Queue per provider</h3>
+            <p class="mt-1 text-[11.5px] leading-relaxed text-muted">Web Push, FCM and APNs run on independent workers, so one slowdown cannot block the rest.</p>
+          </div>
+          <div class="rounded-xl border border-line bg-canvas p-4">
+            <div class="flex items-center justify-between"><span class="font-mono text-[10px] text-muted">04</span><i data-lucide="refresh-cw" class="size-4 text-muted"></i></div>
+            <h3 class="mt-3 text-[13px] font-semibold text-ink">Retry with backoff</h3>
+            <p class="mt-1 text-[11.5px] leading-relaxed text-muted">Transient provider errors retry without additional quota or duplicate records.</p>
+          </div>
+          <div class="rounded-xl border border-line bg-canvas p-4 sm:col-span-2">
+            <div class="flex items-center justify-between"><span class="font-mono text-[10px] text-muted">05</span><i data-lucide="activity" class="size-4 text-muted"></i></div>
+            <h3 class="mt-3 text-[13px] font-semibold text-ink">Record the truth</h3>
+            <p class="mt-1 text-[11.5px] leading-relaxed text-muted">Provider response, status, attempt count and timestamps land in delivery logs. Display events are only recorded when a provider reports them.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 flex flex-wrap items-center gap-2 border-t border-line pt-6" data-reveal>
+        <span class="mr-1 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">Statuses</span>
+        <span class="badge badge-neutral">Pending</span>
+        <span class="badge badge-neutral">Queued</span>
+        <span class="badge badge-info">Processing</span>
+        <span class="badge badge-success">Accepted</span>
+        <span class="badge badge-danger">Failed</span>
+        <span class="badge badge-warning">Expired</span>
+        <span class="ml-auto hidden text-[11px] text-muted sm:inline">Accepted = provider accepted, not confirmed display</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Developers -->
+  <section id="developers" class="scroll-mt-20 py-20">
+    <div class="container-page grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+      <div data-reveal>
+        <p class="text-[10.5px] font-semibold uppercase tracking-[0.13em] text-link">Developers</p>
+        <h2 class="mt-3 text-[30px] font-semibold tracking-[-0.035em] sm:text-[36px]">Integrate in an afternoon.</h2>
+        <p class="mt-3 max-w-md text-[14px] leading-relaxed text-sub">Two endpoints cover the core loop: register a subscriber, send a notification. Everything else is optional.</p>
+        <ul class="mt-6 space-y-3">
+          <li class="flex items-start gap-2.5"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-md bg-primary-soft text-link"><i data-lucide="check" class="size-3"></i></span><span class="text-[12.5px] leading-relaxed text-sub"><code class="inline-code">POST /v1/subscribers</code> accepts web subscriptions and mobile tokens.</span></li>
+          <li class="flex items-start gap-2.5"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-md bg-primary-soft text-link"><i data-lucide="check" class="size-3"></i></span><span class="text-[12.5px] leading-relaxed text-sub"><code class="inline-code">POST /v1/notifications</code> targets all, a segment or individual subscribers.</span></li>
+          <li class="flex items-start gap-2.5"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-md bg-primary-soft text-link"><i data-lucide="check" class="size-3"></i></span><span class="text-[12.5px] leading-relaxed text-sub">Consistent JSON errors, request IDs, pagination and idempotency keys.</span></li>
+        </ul>
+        <div class="mt-6 flex flex-wrap gap-2">
+          <a href="docs.html" class="btn btn-primary btn-sm">API reference<i data-lucide="arrow-right" class="size-3.5"></i></a>
+          <a href="docs.html#quickstart" class="btn btn-secondary btn-sm">Quickstart</a>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-xl border border-line bg-surface shadow-card" x-data="{ tab: 'curl' }" data-reveal>
+        <div class="flex items-center justify-between gap-3 border-b border-line px-4 py-2.5">
+          <div class="flex items-center gap-1.5" role="tablist" aria-label="Code examples">
+            <button type="button" class="tab-btn" role="tab" id="tab-curl" aria-controls="panel-curl" :aria-selected="tab === 'curl'" @click="tab = 'curl'">cURL</button>
+            <button type="button" class="tab-btn" role="tab" id="tab-php" aria-controls="panel-php" :aria-selected="tab === 'php'" @click="tab = 'php'">PHP</button>
+            <button type="button" class="tab-btn" role="tab" id="tab-js" aria-controls="panel-js" :aria-selected="tab === 'js'" @click="tab = 'js'">JavaScript</button>
+          </div>
+          <button type="button" class="btn btn-ghost btn-sm !h-7 !px-2" data-copy-target="#dev-code" aria-label="Copy code sample"><i data-lucide="copy" class="size-3.5"></i></button>
+        </div>
+        <div class="p-4">
+          <div id="panel-curl" role="tabpanel" aria-labelledby="tab-curl" x-show="tab === 'curl'">
+            <pre id="dev-code" class="overflow-x-auto text-[11.5px] leading-[1.8]"><code><span class="token-fn">curl</span> -X POST https://api.lazytown.dev/v1/notifications \
+  -H <span class="token-str">"Authorization: Bearer mira_sk_live_…"</span> \
+  -H <span class="token-str">"Content-Type: application/json"</span> \
+  -H <span class="token-str">"Idempotency-Key: launch-2026-11-10"</span> \
+  -d <span class="token-str">'{ "title": "Hello", "body": "From Mira", "target": { "type": "all" } }'</span></code></pre>
+          </div>
+          <div id="panel-php" role="tabpanel" aria-labelledby="tab-php" x-show="tab === 'php'" x-cloak>
+            <pre id="dev-code-php" class="overflow-x-auto text-[11.5px] leading-[1.8]"><code><span class="token-key">$response</span> = Http::withToken(<span class="token-key">config</span>(<span class="token-str">'services.mira.secret'</span>))
+    -&gt;withHeaders([<span class="token-str">'Idempotency-Key'</span> =&gt; <span class="token-str">'launch-2026-11-10'</span>])
+    -&gt;post(<span class="token-str">'https://api.lazytown.dev/v1/notifications'</span>, [
+        <span class="token-str">'title'</span> =&gt; <span class="token-str">'Hello'</span>,
+        <span class="token-str">'body'</span>  =&gt; <span class="token-str">'From Mira'</span>,
+        <span class="token-str">'target'</span> =&gt; [<span class="token-str">'type'</span> =&gt; <span class="token-str">'all'</span>],
+    ]);
+
+<span class="token-fn">return</span> <span class="token-key">$response</span>-&gt;json(<span class="token-str">'id'</span>);</code></pre>
+          </div>
+          <div id="panel-js" role="tabpanel" aria-labelledby="tab-js" x-show="tab === 'js'" x-cloak>
+            <pre id="dev-code-js" class="overflow-x-auto text-[11.5px] leading-[1.8]"><code><span class="token-fn">const</span> res = <span class="token-fn">await</span> fetch(<span class="token-str">'https://api.lazytown.dev/v1/notifications'</span>, {
+  method: <span class="token-str">'POST'</span>,
+  headers: {
+    <span class="token-str">'Authorization'</span>: <span class="token-str">`Bearer ${process.env.MIRA_SECRET}`</span>,
+    <span class="token-str">'Content-Type'</span>: <span class="token-str">'application/json'</span>,
+  },
+  body: JSON.stringify({
+    title: <span class="token-str">'Hello'</span>,
+    body: <span class="token-str">'From Mira'</span>,
+    target: { type: <span class="token-str">'all'</span> },
+  }),
+});
+
+<span class="token-fn">if</span> (!res.ok) <span class="token-fn">throw new</span> Error(<span class="token-fn">await</span> res.text());</code></pre>
+          </div>
+          <div class="mt-3 flex items-center gap-1.5 border-t border-line pt-3 text-[10.5px] text-muted">
+            <i data-lucide="lock" class="size-3"></i><span>Secret keys stay server-side. Browser clients only use <code class="inline-code">mira_pk_…</code>.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing" class="scroll-mt-20 border-y border-line bg-surface py-20">
+    <div class="container-page">
+      <div class="mx-auto max-w-2xl text-center" data-reveal>
+        <p class="text-[10.5px] font-semibold uppercase tracking-[0.13em] text-link">Pricing</p>
+        <h2 class="mt-3 text-[30px] font-semibold tracking-[-0.035em] sm:text-[36px]">Pay for deliveries, not requests.</h2>
+        <p class="mt-3 text-[14px] leading-relaxed text-sub">One notification to 100 subscribers uses 100 delivery units. Every plan includes Web Push, Android and iOS.</p>
+      </div>
+
+      <div class="mt-10 grid gap-4 lg:grid-cols-3">
+        <div class="card flex flex-col p-5" data-reveal>
+          <div class="flex items-center justify-between"><h3 class="text-[14px] font-semibold text-ink">Free</h3><span class="badge badge-neutral">Start here</span></div>
+          <p class="mt-4 flex items-baseline gap-1"><span class="text-[34px] font-semibold tracking-[-0.04em] text-ink">$0</span><span class="text-[12px] text-muted">/ month</span></p>
+          <p class="mt-1 text-[12px] text-muted">1,000 delivery units per day, per project.</p>
+          <ul class="mt-5 flex-1 space-y-2.5 border-t border-line pt-5 text-[12.5px] text-sub">
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>2 projects</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>1,000 subscribers / project</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>7-day delivery logs</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>API keys &amp; webhooks</li>
+          </ul>
+          <a href="register.html" class="btn btn-secondary btn-sm mt-6 w-full">Create free account</a>
+        </div>
+
+        <div class="card relative flex flex-col border-primary p-5 ring-1 ring-primary" data-reveal data-reveal-delay="60">
+          <span class="absolute -top-2.5 left-5 badge badge-primary !bg-primary !text-onPrimary">Most popular</span>
+          <div class="flex items-center justify-between"><h3 class="text-[14px] font-semibold text-ink">Growth</h3><i data-lucide="zap" class="size-4 text-link"></i></div>
+          <p class="mt-4 flex items-baseline gap-1"><span class="text-[34px] font-semibold tracking-[-0.04em] text-ink">$19</span><span class="text-[12px] text-muted">/ month</span></p>
+          <p class="mt-1 text-[12px] text-muted">50,000 delivery units per day.</p>
+          <ul class="mt-5 flex-1 space-y-2.5 border-t border-line pt-5 text-[12.5px] text-sub">
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>10 projects</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>25,000 subscribers / project</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>30-day logs &amp; analytics</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>Quota &amp; failure webhooks</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>Email support</li>
+          </ul>
+          <a href="register.html" class="btn btn-primary btn-sm mt-6 w-full">Start 14-day trial</a>
+        </div>
+
+        <div class="card flex flex-col p-5" data-reveal data-reveal-delay="120">
+          <div class="flex items-center justify-between"><h3 class="text-[14px] font-semibold text-ink">Scale</h3><span class="badge badge-neutral">Teams</span></div>
+          <p class="mt-4 flex items-baseline gap-1"><span class="text-[34px] font-semibold tracking-[-0.04em] text-ink">$99</span><span class="text-[12px] text-muted">/ month</span></p>
+          <p class="mt-1 text-[12px] text-muted">500,000 delivery units per day.</p>
+          <ul class="mt-5 flex-1 space-y-2.5 border-t border-line pt-5 text-[12.5px] text-sub">
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>Unlimited projects</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>250,000 subscribers / project</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>90-day logs &amp; retention</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>Priority queue workers</li>
+            <li class="flex gap-2"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>99.9% uptime target</li>
+          </ul>
+          <a href="register.html" class="btn btn-secondary btn-sm mt-6 w-full">Contact sales</a>
+        </div>
+      </div>
+
+      <p class="mt-5 text-center text-[11px] text-muted">No card required for Free. Prices shown in USD, excluding tax.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-20">
+    <div class="container-page grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+      <div data-reveal>
+        <p class="text-[10.5px] font-semibold uppercase tracking-[0.13em] text-link">FAQ</p>
+        <h2 class="mt-3 text-[30px] font-semibold tracking-[-0.035em]">Questions, answered.</h2>
+        <p class="mt-3 text-[13.5px] leading-relaxed text-sub">Still unsure? Read the <a href="docs.html" class="link">developer docs</a> or check the <a href="status.html" class="link">live status</a>.</p>
+      </div>
+      <div class="divide-y divide-line border-y border-line" data-reveal>
+        <details class="group">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[13.5px] font-medium text-ink [&::-webkit-details-marker]:hidden">
+            Do I need an SDK?
+            <i data-lucide="plus" class="size-4 shrink-0 text-muted transition-transform group-open:rotate-45"></i>
+          </summary>
+          <p class="pb-4 pr-8 text-[12.5px] leading-relaxed text-sub">No. Mira is API-first and documented with OpenAPI 3.1. Any HTTP client works. Browser clients register subscribers with the publishable key; your backend sends with a secret key.</p>
+        </details>
+        <details class="group">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[13.5px] font-medium text-ink [&::-webkit-details-marker]:hidden">
+            What counts as a delivery unit?
+            <i data-lucide="plus" class="size-4 shrink-0 text-muted transition-transform group-open:rotate-45"></i>
+          </summary>
+          <p class="pb-4 pr-8 text-[12.5px] leading-relaxed text-sub">One unit is one notification sent to one subscriber. Sending to 100 devices consumes 100 units. Retries reuse the original reservation and never charge twice.</p>
+        </details>
+        <details class="group">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[13.5px] font-medium text-ink [&::-webkit-details-marker]:hidden">
+            Does &ldquo;accepted&rdquo; mean the notification was displayed?
+            <i data-lucide="plus" class="size-4 shrink-0 text-muted transition-transform group-open:rotate-45"></i>
+          </summary>
+          <p class="pb-4 pr-8 text-[12.5px] leading-relaxed text-sub">No. Accepted means the provider took the message. Display and open events are only recorded when the provider reports them, and are labelled separately in the dashboard.</p>
+        </details>
+        <details class="group">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-4 text-[13.5px] font-medium text-ink [&::-webkit-details-marker]:hidden">
+            Can I isolate test and live traffic?
+            <i data-lucide="plus" class="size-4 shrink-0 text-muted transition-transform group-open:rotate-45"></i>
+          </summary>
+          <p class="pb-4 pr-8 text-[12.5px] leading-relaxed text-sub">Yes. Every project supports live and test environments with separate keys. Test keys use the <code class="inline-code">mira_sk_test_</code> prefix and never touch live provider credentials.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="container-page pb-20">
+    <div class="relative overflow-hidden rounded-2xl bg-[#0b1220] px-6 py-12 text-center sm:px-12" data-reveal>
+      <div class="pointer-events-none absolute inset-0 opacity-[0.14]" style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 48px 48px; mask-image: radial-gradient(ellipse at center, black, transparent 72%);" aria-hidden="true"></div>
+      <div class="relative mx-auto max-w-2xl">
+        <span class="brand-mark mx-auto size-11"><svg class="size-7" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+        <h2 class="mt-5 text-[28px] font-semibold tracking-[-0.035em] text-white sm:text-[34px]">Start sending in minutes.</h2>
+        <p class="mx-auto mt-3 max-w-lg text-[13.5px] leading-relaxed text-[#a8bdd4]">Create a project, generate a key and send your first push. 1,000 delivery units per day, free.</p>
+        <div class="mt-6 flex flex-wrap justify-center gap-3">
+          <a href="register.html" class="btn btn-lg bg-white text-[#0b1220] hover:bg-[#e6edf7]">Create free account<i data-lucide="arrow-right" class="size-4"></i></a>
+          <a href="docs.html" class="btn btn-lg border-[#2b3a52] bg-transparent text-white hover:bg-[#16243a]"><i data-lucide="book-open" class="size-4"></i>Read the docs</a>
+        </div>
+        <p class="mt-4 text-[11px] text-[#7c8ba1]">No credit card &middot; No SDK &middot; Cancel anytime</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="border-t border-line bg-surface">
+  <div class="container-page py-12">
+    <div class="grid gap-8 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <span class="brand-mark size-8"><svg class="size-5" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+          <span class="text-[18px] font-bold tracking-[-0.045em] text-ink">mira</span>
+        </div>
+        <p class="mt-3 max-w-xs text-[12px] leading-relaxed text-sub">Push notification infrastructure for web, Android and iOS. Built by LazyTown.</p>
+        <a href="status.html" class="mt-4 inline-flex items-center gap-1.5 rounded-md border border-line px-2 py-1 text-[11px] font-medium text-sub transition hover:bg-sunken"><span class="dot text-success"></span>All systems operational</a>
+      </div>
+      <div>
+        <p class="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted">Product</p>
+        <ul class="mt-3 space-y-2 text-[12px] text-sub">
+          <li><a href="#product" class="hover:text-ink">Features</a></li>
+          <li><a href="#delivery" class="hover:text-ink">Delivery</a></li>
+          <li><a href="#pricing" class="hover:text-ink">Pricing</a></li>
+          <li><a href="app/index.html" class="hover:text-ink">Dashboard</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted">Developers</p>
+        <ul class="mt-3 space-y-2 text-[12px] text-sub">
+          <li><a href="docs.html" class="hover:text-ink">Documentation</a></li>
+          <li><a href="docs.html#authentication" class="hover:text-ink">Authentication</a></li>
+          <li><a href="docs.html#webhooks" class="hover:text-ink">Webhooks</a></li>
+          <li><a href="status.html" class="hover:text-ink">Status</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted">Account</p>
+        <ul class="mt-3 space-y-2 text-[12px] text-sub">
+          <li><a href="login.html" class="hover:text-ink">Sign in</a></li>
+          <li><a href="register.html" class="hover:text-ink">Create account</a></li>
+          <li><a href="app/settings.html" class="hover:text-ink">Settings</a></li>
+          <li><a href="app/usage.html" class="hover:text-ink">Usage</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="mt-10 flex flex-col gap-3 border-t border-line pt-5 text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>&copy; <span class="js-year">2026</span> LazyTown. All rights reserved.</p>
+      <div class="flex flex-wrap gap-4"><a href="#" class="hover:text-ink">Privacy</a><a href="#" class="hover:text-ink">Terms</a><a href="#" class="hover:text-ink">Security</a><a href="docs.html" class="hover:text-ink">API docs</a></div>
+    </div>
+  </div>
+</footer>
+
+<div id="toast-region" class="pointer-events-none fixed bottom-4 right-4 z-[80] flex w-[calc(100vw-2rem)] max-w-sm flex-col gap-2" role="region" aria-label="Notifications" aria-live="polite" aria-atomic="false"></div>
+<script src="assets/js/ui.js"></script>
+
+</body>
+</html>

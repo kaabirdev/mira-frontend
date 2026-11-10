@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create your account · Mira</title>
+  <meta name="description" content="Create a free Mira account and send your first push notification in minutes.">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#080d17" media="(prefers-color-scheme: dark)">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Create your account · Mira">
+  <meta property="og:description" content="Create a free Mira account and send your first push notification in minutes.">
+  <meta property="og:site_name" content="Mira">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/app.css">
+
+  <script>
+    window.MIRA_BASE = '';
+    (function () {
+      try {
+        var mode = localStorage.getItem('mira-theme') || 'system';
+        var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.classList.add('js');
+      } catch (e) {}
+    })();
+  </script>
+
+  <script defer src="assets/vendor/alpine.min.js"></script>
+  <script defer src="assets/vendor/lucide.min.js"></script>
+</head>
+
+<body class="bg-canvas">
+<svg xmlns="http://www.w3.org/2000/svg" class="absolute size-0 overflow-hidden" aria-hidden="true" focusable="false">
+  <symbol id="mira-mark" viewBox="0 0 32 32">
+    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+      <path d="M10 21.5a8.5 8.5 0 0 1 8.5-8.5"/>
+      <path d="M10 26.5a13.5 13.5 0 0 1 13.5-13.5" opacity=".55"/>
+    </g>
+    <circle cx="10" cy="21.5" r="2.3" fill="currentColor"/>
+  </symbol>
+</svg>
+
+
+<div class="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)]">
+  <div class="flex min-h-screen flex-col px-4 py-5 sm:px-8 lg:px-12">
+    <header class="flex items-center justify-between gap-3">
+      <a href="index.html" class="flex items-center gap-2.5 rounded-lg" aria-label="mira by LazyTown — home">
+        <span class="brand-mark size-8"><svg class="size-5" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+        <span class="text-[19px] font-bold leading-none tracking-[-0.045em] text-ink">mira</span>
+        <span class="ml-1 hidden rounded border border-line px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-wider text-muted sm:inline">by LazyTown</span>
+      </a>
+      <div class="flex items-center gap-1.5">
+        <button type="button" class="btn btn-ghost btn-icon" data-theme-toggle aria-label="Toggle color theme">
+          <i data-lucide="sun-moon" class="size-[18px]"></i>
+        </button>
+        <a href="app/index.html" class="btn btn-ghost btn-sm hidden sm:inline-flex">View dashboard</a>
+      </div>
+    </header>
+
+    <main class="mx-auto flex w-full max-w-[420px] flex-1 flex-col justify-center py-10">
+      <div>
+        <span class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-2.5 py-1 text-[11px] font-medium text-sub">
+          <span class="dot text-success"></span>Free plan &middot; no card
+        </span>
+        <h1 class="mt-4 text-[28px] font-semibold leading-tight tracking-[-0.035em] text-ink">Create your account</h1>
+        <p class="mt-2 text-[13.5px] leading-relaxed text-sub">1,000 delivery units per day, per project. Web Push, Android and iOS included.</p>
+      </div>
+
+      <form class="mt-7 space-y-4" novalidate data-auth-form data-redirect="app/index.html" data-submit-label="Creating account&hellip;">
+        <div data-field>
+          <label class="label" for="name">Full name</label>
+          <input id="name" name="name" type="text" class="input input-lg" placeholder="Kabir Sharma" autocomplete="name" required data-required-message="Enter your full name." aria-describedby="name-error">
+          <p class="error-text hidden" id="name-error" data-error-for="name" role="alert"><i data-lucide="circle-alert" class="size-3.5 shrink-0"></i><span></span></p>
+        </div>
+
+        <div data-field>
+          <label class="label" for="email">Work email</label>
+          <input id="email" name="email" type="email" class="input input-lg" placeholder="you@company.com" autocomplete="email" required data-required-message="Enter your work email." aria-describedby="email-error">
+          <p class="error-text hidden" id="email-error" data-error-for="email" role="alert"><i data-lucide="circle-alert" class="size-3.5 shrink-0"></i><span></span></p>
+        </div>
+
+        <div data-field>
+          <label class="label" for="reg-password">Password</label>
+          <div class="relative">
+            <input id="reg-password" name="password" type="password" class="input input-lg pr-11" placeholder="At least 8 characters" autocomplete="new-password" required minlength="8" data-required-message="Choose a password." aria-describedby="password-error password-strength">
+            <button type="button" class="absolute inset-y-0 right-1 my-auto grid size-9 place-items-center rounded-md text-muted transition hover:bg-sunken hover:text-ink" data-password-toggle="reg-password" aria-label="Show password" aria-pressed="false">
+              <i data-lucide="eye" class="size-4" data-eye-show></i>
+              <i data-lucide="eye-off" class="hidden size-4" data-eye-hide></i>
+            </button>
+          </div>
+          <div id="password-strength" class="mt-2" data-strength-for="reg-password">
+            <div class="flex items-center gap-1.5" aria-hidden="true">
+              <span class="h-1 flex-1 rounded-full bg-line" data-strength-bar></span>
+              <span class="h-1 flex-1 rounded-full bg-line" data-strength-bar></span>
+              <span class="h-1 flex-1 rounded-full bg-line" data-strength-bar></span>
+              <span class="h-1 flex-1 rounded-full bg-line" data-strength-bar></span>
+            </div>
+            <p class="mt-1.5 flex items-center justify-between gap-2 text-[11px] font-medium text-muted"><span data-strength-label>Use 8+ characters</span><span class="font-normal">Mixed case, numbers &amp; symbols help</span></p>
+          </div>
+          <p class="error-text hidden" id="password-error" data-error-for="password" role="alert"><i data-lucide="circle-alert" class="size-3.5 shrink-0"></i><span></span></p>
+        </div>
+
+        <div data-field>
+          <label class="flex items-start gap-2.5 text-[12px] leading-relaxed text-sub">
+            <input type="checkbox" name="terms" id="terms" class="checkbox mt-0.5" required>
+            <span>I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a>, and to receive essential account email.</span>
+          </label>
+          <p class="error-text hidden" id="terms-error" data-error-for="terms" role="alert"><i data-lucide="circle-alert" class="size-3.5 shrink-0"></i><span></span></p>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg w-full" data-submit>
+          Create free account<i data-lucide="arrow-right" class="size-4"></i>
+        </button>
+      </form>
+
+      <div class="my-6 flex items-center gap-3" aria-hidden="true">
+        <span class="h-px flex-1 bg-line"></span>
+        <span class="text-[10.5px] font-medium uppercase tracking-[0.1em] text-muted">or</span>
+        <span class="h-px flex-1 bg-line"></span>
+      </div>
+
+      <button type="button" class="btn btn-secondary btn-lg w-full" data-demo-action="SSO is not configured in this demo">
+        <i data-lucide="github" class="size-4"></i>Continue with GitHub
+      </button>
+
+      <p class="mt-6 text-center text-[13px] text-sub">
+        Already have an account? <a href="login.html" class="link">Sign in</a>
+      </p>
+
+      <div class="mt-8 flex items-start gap-2.5 rounded-lg border border-line bg-sunken/60 p-3 text-[11.5px] leading-relaxed text-muted">
+        <i data-lucide="info" class="mt-0.5 size-3.5 shrink-0"></i>
+        <p><span class="font-medium text-sub">Frontend demo.</span> No account is created and no data leaves your browser. Valid input continues straight to the dashboard.</p>
+      </div>
+    </main>
+
+    <footer class="flex flex-col gap-2 border-t border-line py-4 text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>&copy; <span class="js-year">2026</span> LazyTown. All rights reserved.</p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#" class="hover:text-ink">Privacy</a>
+        <a href="#" class="hover:text-ink">Terms</a>
+        <a href="status.html" class="inline-flex items-center gap-1.5 hover:text-ink"><span class="dot text-success"></span>Status</a>
+      </div>
+    </footer>
+  </div>
+
+  <aside class="relative hidden overflow-hidden border-l border-[#1b2739] bg-[#0b1220] lg:flex lg:flex-col lg:justify-between lg:p-10 xl:p-14" aria-label="Getting started">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 56px 56px; mask-image: radial-gradient(ellipse 100% 80% at 30% 0%, black, transparent 75%);" aria-hidden="true"></div>
+
+    <div class="relative flex items-center gap-2.5 text-[#a8bdd4]">
+      <span class="grid size-7 place-items-center rounded-md bg-[#16243a] text-white"><svg class="size-4" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+      <span class="font-mono text-[10.5px] uppercase tracking-[0.14em]">Getting started</span>
+      <span class="ml-auto inline-flex items-center gap-1.5 rounded border border-[#26364f] px-1.5 py-0.5 font-mono text-[10px] text-[#86efac]"><span class="dot text-[#86efac]"></span>1,000 free/day</span>
+    </div>
+
+    <div class="relative my-10">
+      <h2 class="max-w-md text-[32px] font-semibold leading-[1.1] tracking-[-0.04em] text-white">Your first push<br>before lunch.</h2>
+      <p class="mt-4 max-w-sm text-[13px] leading-relaxed text-[#a8bdd4]">No SDK, no provider accounts to wire up. Create a project, copy a key and POST a notification.</p>
+
+      <ol class="mt-8 space-y-4">
+        <li class="flex gap-3">
+          <span class="grid size-6 shrink-0 place-items-center rounded-md border border-[#26364f] bg-[#0e1728] font-mono text-[10px] text-[#8ba0bb]">01</span>
+          <div><p class="text-[12.5px] font-medium text-white">Create a project</p><p class="mt-0.5 text-[11px] leading-relaxed text-[#7c8ba1]">Each project has isolated subscribers, keys, logs and quota.</p></div>
+        </li>
+        <li class="flex gap-3">
+          <span class="grid size-6 shrink-0 place-items-center rounded-md border border-[#26364f] bg-[#0e1728] font-mono text-[10px] text-[#8ba0bb]">02</span>
+          <div><p class="text-[12.5px] font-medium text-white">Generate a secret key</p><p class="mt-0.5 text-[11px] leading-relaxed text-[#7c8ba1]">Scoped to send notifications. Shown once, stored server-side.</p></div>
+        </li>
+        <li class="flex gap-3">
+          <span class="grid size-6 shrink-0 place-items-center rounded-md border border-[#26364f] bg-[#0e1728] font-mono text-[10px] text-[#8ba0bb]">03</span>
+          <div><p class="text-[12.5px] font-medium text-white">Send and audit</p><p class="mt-0.5 text-[11px] leading-relaxed text-[#7c8ba1]">Watch queued → accepted in delivery logs, with provider responses.</p></div>
+        </li>
+      </ol>
+
+      <div class="mt-8 overflow-hidden rounded-xl border border-[#1e2a3f] bg-[#0e1728]">
+        <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2.5">
+          <span class="font-mono text-[10.5px] text-[#8ba0bb]">notifications.sh</span>
+          <span class="rounded bg-[#10281b] px-1.5 py-0.5 font-mono text-[10px] text-[#86efac]">202 Accepted</span>
+        </div>
+        <pre class="overflow-x-auto p-3.5 font-mono text-[10.5px] leading-[1.8] text-[#dbe6f7]"><code><span class="text-[#c4b5fd]">curl</span> -X POST https://api.lazytown.dev/v1/notifications \
+  -H <span class="text-[#86efac]">"Authorization: Bearer mira_sk_live_…"</span> \
+  -d <span class="text-[#86efac]">'{ "title": "Hello", "target": { "type": "all" } }'</span></code></pre>
+      </div>
+    </div>
+
+    <p class="relative flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-[10px] text-[#7c8ba1]">
+      <span>No credit card</span>
+      <span class="text-[#2b3a52]">/</span>
+      <span>No SDK required</span>
+      <a href="status.html" class="ml-auto inline-flex items-center gap-1.5 text-[#a8bdd4] hover:text-white"><span class="dot text-[#86efac]"></span>All systems</a>
+    </p>
+  </aside>
+</div>
+
+<div id="toast-region" class="pointer-events-none fixed bottom-4 right-4 z-[80] flex w-[calc(100vw-2rem)] max-w-sm flex-col gap-2" role="region" aria-label="Notifications" aria-live="polite" aria-atomic="false"></div>
+<script src="assets/js/ui.js"></script>
+
+<script src="assets/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sign in · Mira</title>
+  <meta name="description" content="Sign in to your Mira workspace to send notifications and audit delivery.">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#080d17" media="(prefers-color-scheme: dark)">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sign in · Mira">
+  <meta property="og:description" content="Sign in to your Mira workspace to send notifications and audit delivery.">
+  <meta property="og:site_name" content="Mira">
+
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/css/app.css">
+
+  <script>
+    window.MIRA_BASE = '';
+    (function () {
+      try {
+        var mode = localStorage.getItem('mira-theme') || 'system';
+        var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.classList.add('js');
+      } catch (e) {}
+    })();
+  </script>
+
+  <script defer src="assets/vendor/alpine.min.js"></script>
+  <script defer src="assets/vendor/lucide.min.js"></script>
+</head>
+
+<body class="bg-canvas">
+<svg xmlns="http://www.w3.org/2000/svg" class="absolute size-0 overflow-hidden" aria-hidden="true" focusable="false">
+  <symbol id="mira-mark" viewBox="0 0 32 32">
+    <g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+      <path d="M10 21.5a8.5 8.5 0 0 1 8.5-8.5"/>
+      <path d="M10 26.5a13.5 13.5 0 0 1 13.5-13.5" opacity=".55"/>
+    </g>
+    <circle cx="10" cy="21.5" r="2.3" fill="currentColor"/>
+  </symbol>
+</svg>
+
+
+<div class="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_minmax(0,0.92fr)]">
+  <div class="flex min-h-screen flex-col px-4 py-5 sm:px-8 lg:px-12">
+    <header class="flex items-center justify-between gap-3">
+      <a href="index.html" class="flex items-center gap-2.5 rounded-lg" aria-label="mira by LazyTown — home">
+        <span class="brand-mark size-8"><svg class="size-5" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+        <span class="text-[19px] font-bold leading-none tracking-[-0.045em] text-ink">mira</span>
+        <span class="ml-1 hidden rounded border border-line px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-wider text-muted sm:inline">by LazyTown</span>
+      </a>
+      <div class="flex items-center gap-1.5">
+        <button type="button" class="btn btn-ghost btn-icon" data-theme-toggle aria-label="Toggle color theme">
+          <i data-lucide="sun-moon" class="size-[18px]"></i>
+        </button>
+        <a href="app/index.html" class="btn btn-ghost btn-sm hidden sm:inline-flex">View dashboard</a>
+      </div>
+    </header>
+
+    <main class="mx-auto flex w-full max-w-[400px] flex-1 flex-col justify-center py-10">
+      <div>
+        <span class="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-2.5 py-1 text-[11px] font-medium text-sub">
+          <span class="dot text-success"></span>Workspace access
+        </span>
+        <h1 class="mt-4 text-[28px] font-semibold leading-tight tracking-[-0.035em] text-ink">Sign in to Mira</h1>
+        <p class="mt-2 text-[13.5px] leading-relaxed text-sub">Send notifications, inspect delivery logs and manage project keys.</p>
+      </div>
+
+      <form class="mt-8 space-y-4" novalidate data-auth-form data-redirect="app/index.html" data-submit-label="Signing in&hellip;">
+        <div data-field>
+          <label class="label" for="email">Work email</label>
+          <input id="email" name="email" type="email" class="input input-lg" placeholder="you@company.com" autocomplete="email" required data-required-message="Enter your work email." aria-describedby="email-error">
+          <p class="error-text hidden" id="email-error" data-error-for="email" role="alert"><i data-lucide="circle-alert" class="size-3.5 shrink-0"></i><span></span></p>
+        </div>
+
+        <div data-field>
+          <div class="mb-1.5 flex items-center justify-between gap-3">
+            <label class="label !mb-0" for="password">Password</label>
+            <button type="button" class="text-[12px] font-medium text-link hover:underline" onclick="Mira.openDialog('forgot-dialog')">Forgot password?</button>
+          </div>
+          <div class="relative">
+            <input id="password" name="password" type="password" class="input input-lg pr-11" placeholder="Enter your password" autocomplete="current-password" required minlength="8" data-required-message="Enter your password." aria-describedby="password-error">
+            <button type="button" class="absolute inset-y-0 right-1 my-auto grid size-9 place-items-center rounded-md text-muted transition hover:bg-sunken hover:text-ink" data-password-toggle="password" aria-label="Show password" aria-pressed="false">
+              <i data-lucide="eye" class="size-4" data-eye-show></i>
+              <i data-lucide="eye-off" class="hidden size-4" data-eye-hide></i>
+            </button>
+          </div>
+          <p class="error-text hidden" id="password-error" data-error-for="password" role="alert"><i data-lucide="circle-alert" class="size-3.5 shrink-0"></i><span></span></p>
+        </div>
+
+        <label class="flex items-center gap-2 text-[12.5px] text-sub">
+          <input type="checkbox" name="remember" class="checkbox" checked>Keep me signed in for 30 days
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-lg w-full" data-submit>
+          Sign in<i data-lucide="arrow-right" class="size-4"></i>
+        </button>
+      </form>
+
+      <div class="my-6 flex items-center gap-3" aria-hidden="true">
+        <span class="h-px flex-1 bg-line"></span>
+        <span class="text-[10.5px] font-medium uppercase tracking-[0.1em] text-muted">or</span>
+        <span class="h-px flex-1 bg-line"></span>
+      </div>
+
+      <button type="button" class="btn btn-secondary btn-lg w-full" data-demo-action="SSO is not configured in this demo">
+        <i data-lucide="github" class="size-4"></i>Continue with GitHub
+      </button>
+
+      <p class="mt-6 text-center text-[13px] text-sub">
+        New to Mira? <a href="register.html" class="link">Create a free account</a>
+      </p>
+
+      <div class="mt-8 flex items-start gap-2.5 rounded-lg border border-line bg-sunken/60 p-3 text-[11.5px] leading-relaxed text-muted">
+        <i data-lucide="info" class="mt-0.5 size-3.5 shrink-0"></i>
+        <p><span class="font-medium text-sub">Frontend demo.</span> Credentials are validated in the browser only and never sent to a server. Any valid email and 8+ character password continues to the dashboard.</p>
+      </div>
+    </main>
+
+    <footer class="flex flex-col gap-2 border-t border-line py-4 text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
+      <p>&copy; <span class="js-year">2026</span> LazyTown. All rights reserved.</p>
+      <div class="flex flex-wrap gap-4">
+        <a href="#" class="hover:text-ink">Privacy</a>
+        <a href="#" class="hover:text-ink">Terms</a>
+        <a href="status.html" class="inline-flex items-center gap-1.5 hover:text-ink"><span class="dot text-success"></span>Status</a>
+      </div>
+    </footer>
+  </div>
+
+  <aside class="relative hidden overflow-hidden border-l border-[#1b2739] bg-[#0b1220] lg:flex lg:flex-col lg:justify-between lg:p-10 xl:p-14" aria-label="Product overview">
+    <div class="pointer-events-none absolute inset-0 opacity-[0.12]" style="background-image: linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px); background-size: 56px 56px; mask-image: radial-gradient(ellipse 100% 80% at 30% 0%, black, transparent 75%);" aria-hidden="true"></div>
+
+    <div class="relative flex items-center gap-2.5 text-[#a8bdd4]">
+      <span class="grid size-7 place-items-center rounded-md bg-[#16243a] text-white"><svg class="size-4" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+      <span class="font-mono text-[10.5px] uppercase tracking-[0.14em]">Delivery pipeline</span>
+      <span class="ml-auto inline-flex items-center gap-1.5 rounded border border-[#26364f] px-1.5 py-0.5 font-mono text-[10px] text-[#86efac]"><span class="dot text-[#86efac]"></span>Operational</span>
+    </div>
+
+    <div class="relative my-10">
+      <h2 class="max-w-md text-[32px] font-semibold leading-[1.1] tracking-[-0.04em] text-white">Delivery logs,<br>not guesswork.</h2>
+      <p class="mt-4 max-w-sm text-[13px] leading-relaxed text-[#a8bdd4]">Every attempt is recorded with the provider response, attempt count and request ID. Accepted means accepted &mdash; never confused with displayed.</p>
+
+      <div class="mt-8 overflow-hidden rounded-xl border border-[#1e2a3f] bg-[#0e1728]">
+        <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2.5">
+          <span class="font-mono text-[10.5px] text-[#8ba0bb]">delivery · ntf_01JCH4K9X2</span>
+          <span class="rounded bg-[#10281b] px-1.5 py-0.5 font-mono text-[10px] text-[#86efac]">accepted</span>
+        </div>
+        <div class="divide-y divide-[#1e2a3f]">
+          <div class="flex items-center gap-3 px-3.5 py-3">
+            <span class="grid size-6 place-items-center rounded-md bg-[#10281b] text-[#86efac]"><i data-lucide="check" class="size-3.5"></i></span>
+            <div class="min-w-0 flex-1">
+              <p class="font-mono text-[11px] text-[#dbe6f7]">sub_9f2c · web</p>
+              <p class="text-[10px] text-[#7c8ba1]">FCM accepted · attempt 1 of 3</p>
+            </div>
+            <span class="font-mono text-[10px] text-[#7c8ba1]">142 ms</span>
+          </div>
+          <div class="flex items-center gap-3 px-3.5 py-3">
+            <span class="grid size-6 place-items-center rounded-md bg-[#2d1517] text-[#fca5a5]"><i data-lucide="x" class="size-3.5"></i></span>
+            <div class="min-w-0 flex-1">
+              <p class="font-mono text-[11px] text-[#dbe6f7]">sub_4a81 · android</p>
+              <p class="text-[10px] text-[#7c8ba1]">Token unregistered · retry scheduled</p>
+            </div>
+            <span class="font-mono text-[10px] text-[#7c8ba1]">attempt 1</span>
+          </div>
+          <div class="flex items-center gap-3 px-3.5 py-3">
+            <span class="grid size-6 place-items-center rounded-md bg-[#2b210c] text-[#fcd34d]"><i data-lucide="clock" class="size-3.5"></i></span>
+            <div class="min-w-0 flex-1">
+              <p class="font-mono text-[11px] text-[#dbe6f7]">sub_71df · ios</p>
+              <p class="text-[10px] text-[#7c8ba1]">Queued · APNs worker</p>
+            </div>
+            <span class="font-mono text-[10px] text-[#7c8ba1]">pending</span>
+          </div>
+        </div>
+      </div>
+
+      <dl class="mt-8 grid grid-cols-3 gap-4 border-t border-[#1e2a3f] pt-5">
+        <div><dt class="text-[10px] uppercase tracking-[0.1em] text-[#7c8ba1]">Statuses</dt><dd class="mt-1 font-mono text-[13px] text-white">6</dd></div>
+        <div><dt class="text-[10px] uppercase tracking-[0.1em] text-[#7c8ba1]">Free units</dt><dd class="mt-1 font-mono text-[13px] text-white">1,000/day</dd></div>
+        <div><dt class="text-[10px] uppercase tracking-[0.1em] text-[#7c8ba1]">Webhooks</dt><dd class="mt-1 font-mono text-[13px] text-white">HMAC</dd></div>
+      </dl>
+    </div>
+
+    <p class="relative flex flex-wrap items-center gap-x-4 gap-y-1.5 font-mono text-[10px] text-[#7c8ba1]">
+      <span>REST / OpenAPI 3.1</span>
+      <span class="text-[#2b3a52]">/</span>
+      <span>Web Push · FCM · APNs</span>
+      <a href="status.html" class="ml-auto inline-flex items-center gap-1.5 text-[#a8bdd4] hover:text-white"><span class="dot text-[#86efac]"></span>All systems</a>
+    </p>
+  </aside>
+</div>
+
+<dialog id="forgot-dialog" class="modal max-w-md" aria-labelledby="forgot-title">
+  <form class="p-0" novalidate data-reset-form>
+    <div class="modal-header">
+      <div class="flex items-start gap-3">
+        <span class="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-link"><i data-lucide="key-round" class="size-[18px]"></i></span>
+        <div>
+          <h2 id="forgot-title" class="text-[15px] font-semibold text-ink">Reset your password</h2>
+          <p class="mt-1 text-[12.5px] leading-relaxed text-sub">We will email a single-use link that expires in 30 minutes.</p>
+        </div>
+      </div>
+      <button type="button" class="btn btn-ghost btn-icon !size-8" data-dialog-close aria-label="Close dialog"><i data-lucide="x" class="size-4"></i></button>
+    </div>
+    <div class="modal-body">
+      <div data-field>
+        <label class="label" for="reset-email">Account email</label>
+        <input id="reset-email" name="reset_email" type="email" class="input" placeholder="you@company.com" autocomplete="email" required data-autofocus aria-describedby="reset-email-error">
+        <p class="error-text hidden" id="reset-email-error" data-error-for="reset_email" role="alert"><i data-lucide="circle-alert" class="size-3.5 shrink-0"></i><span></span></p>
+      </div>
+      <p class="mt-3 flex items-start gap-2 text-[11.5px] leading-relaxed text-muted"><i data-lucide="shield-check" class="mt-0.5 size-3.5 shrink-0"></i>For security, we do not reveal whether an email is registered.</p>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-sm" data-dialog-close>Cancel</button>
+      <button type="submit" class="btn btn-primary btn-sm">Send reset link</button>
+    </div>
+  </form>
+</dialog>
+
+<div id="toast-region" class="pointer-events-none fixed bottom-4 right-4 z-[80] flex w-[calc(100vw-2rem)] max-w-sm flex-col gap-2" role="region" aria-label="Notifications" aria-live="polite" aria-atomic="false"></div>
+<script src="assets/js/ui.js"></script>
+
+<script src="assets/js/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>%TITLE%</title>
+  <meta name="description" content="%DESC%">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#080d17" media="(prefers-color-scheme: dark)">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="%TITLE%">
+  <meta property="og:description" content="%DESC%">
+  <meta property="og:site_name" content="Mira">
+
+  <link rel="icon" href="%BASE%assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="%BASE%assets/fonts/plus-jakarta-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="%BASE%assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="%BASE%assets/css/app.css">
+
+  <script>
+    window.MIRA_BASE = '%BASE%';
+    (function () {
+      try {
+        var mode = localStorage.getItem('mira-theme') || 'system';
+        var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        document.documentElement.dataset.themeMode = mode;
+        document.documentElement.classList.add('js');
+      } catch (e) {}
+    })();
+  </script>
+
+  <script defer src="%BASE%assets/vendor/alpine.min.js"></script>
+  <script defer src="%BASE%assets/vendor/lucide.min.js"></script>
+</head>

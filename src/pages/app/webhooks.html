@@ -1,0 +1,191 @@
+<!-- @title Webhooks · Mira -->
+<!-- @desc Signed webhook endpoints, event subscriptions and delivery history. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="webhooks" data-title="Webhooks">
+<!-- @include partials/sprite.html -->
+<!-- @include partials/sidebar.html -->
+
+<div class="flex min-h-screen flex-col lg:pl-[264px]">
+  <!-- @include partials/topbar.html -->
+
+  <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-page space-y-5">
+
+      <div class="page-header">
+        <div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h1 class="text-[24px] font-semibold leading-tight tracking-[-0.03em]">Webhooks</h1>
+            <span class="badge badge-neutral">2 active</span>
+          </div>
+          <p class="mt-1.5 text-[13.5px] text-muted">HMAC-SHA256 signed events with automatic retries and full delivery history.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="../docs.html#webhooks" class="btn btn-secondary btn-sm"><i data-lucide="book-open" class="size-[15px]"></i>Webhook guide</a>
+          <button type="button" class="btn btn-primary btn-sm" data-webhook-create><i data-lucide="plus" class="size-[15px]"></i>Add endpoint</button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-3 rounded-xl border border-line bg-surface px-4 py-3 shadow-card sm:flex-row sm:items-center">
+        <span class="grid size-8 shrink-0 place-items-center rounded-lg bg-primary-soft text-link"><i data-lucide="shield-check" class="size-4"></i></span>
+        <p class="flex-1 text-[12px] leading-relaxed text-sub"><span class="font-medium text-ink">Signed with HMAC-SHA256.</span> Verify <code class="inline-code">X-Mira-Signature</code> against <code class="inline-code">X-Mira-Timestamp</code> and the raw body. Replay protection rejects stale timestamps.</p>
+        <a href="../docs.html#webhooks" class="btn btn-ghost btn-sm shrink-0">Header reference<i data-lucide="arrow-right" class="size-3.5"></i></a>
+      </div>
+
+      <section class="card" aria-labelledby="endpoints-title">
+        <div class="card-header">
+          <div>
+            <h2 id="endpoints-title" class="card-title">Endpoints</h2>
+            <p class="card-sub">HTTPS only &middot; private and loopback addresses blocked</p>
+          </div>
+          <span class="text-[11px] text-muted">Queue: <span class="font-mono">webhooks</span></span>
+        </div>
+        <div class="table-wrap">
+          <table class="data-table min-w-[980px]">
+            <caption class="sr-only">Webhook endpoints</caption>
+            <thead>
+              <tr>
+                <th scope="col">Endpoint</th>
+                <th scope="col">Events</th>
+                <th scope="col">Status</th>
+                <th scope="col" class="text-right">Success rate</th>
+                <th scope="col">Last delivery</th>
+                <th scope="col"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="webhooks-body"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <section class="card xl:col-span-2" aria-labelledby="webhook-deliveries-title">
+          <div class="card-header">
+            <div>
+              <h2 id="webhook-deliveries-title" class="card-title">Recent deliveries</h2>
+              <p class="card-sub">Signed events sent to your endpoints</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="refresh-webhooks"><i data-lucide="refresh-cw" class="size-3.5"></i>Refresh</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table min-w-[700px]">
+              <caption class="sr-only">Recent webhook deliveries</caption>
+              <thead>
+                <tr><th scope="col">Event</th><th scope="col">Endpoint</th><th scope="col">Response</th><th scope="col" class="text-right">Attempts</th><th scope="col" class="text-right">Duration</th><th scope="col">Time</th></tr>
+              </thead>
+              <tbody id="webhook-deliveries-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card overflow-hidden" aria-labelledby="signature-title">
+          <div class="card-header">
+            <div>
+              <h2 id="signature-title" class="card-title">Verify a signature</h2>
+              <p class="card-sub">PHP 8.2</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm !px-2" data-copy-target="#signature-code" aria-label="Copy signature example"><i data-lucide="copy" class="size-3.5"></i></button>
+          </div>
+          <div class="p-4">
+            <div class="code-block">
+              <pre><code id="signature-code"><span class="token-key">$payload</span> = file_get_contents(<span class="token-str">'php://input'</span>);
+<span class="token-key">$timestamp</span> = <span class="token-key">$_SERVER</span>[<span class="token-str">'HTTP_X_MIRA_TIMESTAMP'</span>];
+<span class="token-key">$signature</span> = <span class="token-key">$_SERVER</span>[<span class="token-str">'HTTP_X_MIRA_SIGNATURE'</span>];
+
+<span class="token-key">$expected</span> = hash_hmac(
+    <span class="token-str">'sha256'</span>,
+    <span class="token-key">$timestamp</span> . <span class="token-str">'.'</span> . <span class="token-key">$payload</span>,
+    <span class="token-key">$signingSecret</span>
+);
+
+<span class="token-fn">if</span> (! hash_equals(<span class="token-key">$expected</span>, <span class="token-key">$signature</span>)) {
+    http_response_code(<span class="token-num">401</span>);
+    exit;
+}</code></pre>
+            </div>
+          </div>
+          <div class="border-t border-line bg-sunken/40 px-4 py-3">
+            <p class="text-[11px] leading-relaxed text-muted">Reject timestamps older than five minutes. Retries use exponential backoff and preserve the original event ID.</p>
+          </div>
+        </section>
+      </div>
+
+      <section class="card" aria-labelledby="headers-title">
+        <div class="card-header">
+          <div>
+            <h2 id="headers-title" class="card-title">Event headers</h2>
+            <p class="card-sub">Sent with every delivery</p>
+          </div>
+        </div>
+        <div class="card-body pt-3">
+          <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div class="rounded-lg border border-line bg-sunken/50 p-3"><code class="font-mono text-[11px] text-ink">X-Mira-Event</code><p class="mt-1 text-[11px] text-muted">e.g. notification.completed</p></div>
+            <div class="rounded-lg border border-line bg-sunken/50 p-3"><code class="font-mono text-[11px] text-ink">X-Mira-Event-ID</code><p class="mt-1 text-[11px] text-muted">Idempotency for receivers</p></div>
+            <div class="rounded-lg border border-line bg-sunken/50 p-3"><code class="font-mono text-[11px] text-ink">X-Mira-Timestamp</code><p class="mt-1 text-[11px] text-muted">Unix seconds, UTC</p></div>
+            <div class="rounded-lg border border-line bg-sunken/50 p-3"><code class="font-mono text-[11px] text-ink">X-Mira-Signature</code><p class="mt-1 text-[11px] text-muted">HMAC-SHA256 hex digest</p></div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- Add webhook -->
+<dialog id="webhook-dialog" class="modal" aria-labelledby="webhook-dialog-title">
+  <form id="webhook-form" novalidate>
+    <div class="modal-header">
+      <div>
+        <h2 id="webhook-dialog-title" class="text-[16px] font-semibold tracking-[-0.02em]">Add webhook endpoint</h2>
+        <p class="mt-0.5 text-[12.5px] text-muted">Mira signs every event and retries failed deliveries.</p>
+      </div>
+      <button type="button" class="btn btn-ghost btn-icon !size-8" data-dialog-close aria-label="Close dialog"><i data-lucide="x" class="size-4"></i></button>
+    </div>
+    <div class="modal-body space-y-4">
+      <div>
+        <label class="label" for="webhook-url">Endpoint URL</label>
+        <input class="input font-mono text-[12px]" id="webhook-url" name="url" type="url" placeholder="https://api.acme.dev/hooks/mira" required data-autofocus>
+        <p class="hint">Public HTTPS only. Localhost, private IPs and unsafe redirects are rejected.</p>
+        <p class="error-text hidden" data-error-for="webhook-url"><i data-lucide="alert-circle" class="size-3.5 shrink-0"></i>Enter a valid HTTPS endpoint URL.</p>
+      </div>
+      <div>
+        <label class="label" for="webhook-description">Description <span class="font-normal text-muted">(optional)</span></label>
+        <input class="input" id="webhook-description" name="description" type="text" placeholder="Production event relay">
+      </div>
+      <fieldset>
+        <legend class="label">Environment</legend>
+        <div class="flex gap-2">
+          <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-line px-3 py-2 text-[12.5px] has-[:checked]:border-primary has-[:checked]:bg-primary-soft/50"><input type="radio" name="webhookEnv" value="live" class="accent-primary" checked><span class="dot text-success"></span>Live</label>
+          <label class="flex cursor-pointer items-center gap-2 rounded-lg border border-line px-3 py-2 text-[12.5px] has-[:checked]:border-primary has-[:checked]:bg-primary-soft/50"><input type="radio" name="webhookEnv" value="test" class="accent-primary"><span class="dot text-warning"></span>Test</label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <div class="flex items-center justify-between">
+          <legend class="label mb-0">Events to send</legend>
+          <button type="button" class="text-[11px] font-medium text-link hover:underline" id="toggle-all-events">Select all</button>
+        </div>
+        <div class="mt-2 grid gap-1.5 sm:grid-cols-2">
+          <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="event" value="notification.queued" checked><span class="font-mono">notification.queued</span></label>
+          <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="event" value="notification.accepted" checked><span class="font-mono">notification.accepted</span></label>
+          <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="event" value="notification.failed" checked><span class="font-mono">notification.failed</span></label>
+          <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="event" value="notification.completed" checked><span class="font-mono">notification.completed</span></label>
+          <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="event" value="subscriber.created"><span class="font-mono">subscriber.created</span></label>
+          <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="event" value="subscriber.expired"><span class="font-mono">subscriber.expired</span></label>
+          <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="event" value="quota.warning"><span class="font-mono">quota.warning</span></label>
+          <label class="flex cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 text-[11.5px] text-sub hover:bg-sunken"><input type="checkbox" class="checkbox" name="event" value="quota.exceeded"><span class="font-mono">quota.exceeded</span></label>
+        </div>
+        <p class="error-text hidden" data-error-for="webhook-events"><i data-lucide="alert-circle" class="size-3.5 shrink-0"></i>Select at least one event.</p>
+      </fieldset>
+      <div class="rounded-lg border border-line bg-sunken/60 p-3">
+        <p class="flex items-start gap-2 text-[11.5px] leading-relaxed text-sub"><i data-lucide="key-round" class="mt-0.5 size-3.5 shrink-0 text-muted"></i>A signing secret is generated on save. You can reveal it once from the endpoint menu.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-sm" data-dialog-close>Cancel</button>
+      <button type="submit" class="btn btn-primary btn-sm"><i data-lucide="plus" class="size-[15px]"></i>Add endpoint</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- @include partials/app-scripts.html -->
+</body>
+</html>

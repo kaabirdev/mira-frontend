@@ -1,0 +1,25 @@
+{
+  "name": "mira",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "node build.mjs && tailwindcss -i ./src/styles/app.css -o ./assets/css/app.css --minify",
+    "dev": "node build.mjs && tailwindcss -i ./src/styles/app.css -o ./assets/css/app.css --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
+  },
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.3.0",
+    "@fontsource-variable/plus-jakarta-sans": "^5.3.0",
+    "alpinejs": "^3.17.5",
+    "chart.js": "^4.6.1",
+    "lucide": "^0.468.0"
+  }
+}

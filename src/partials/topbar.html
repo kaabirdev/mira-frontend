@@ -1,0 +1,98 @@
+<header class="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-2 border-b border-line bg-canvas px-4 sm:gap-3 sm:px-6 lg:px-8">
+  <button type="button" class="btn btn-ghost btn-icon lg:hidden" data-sidebar-open aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+    <i data-lucide="menu" class="size-5"></i>
+  </button>
+
+  <div class="crumb hidden min-w-0 md:flex" aria-label="Breadcrumb">
+    <a href="%BASE%app/projects.html" class="hidden items-center gap-1.5 rounded px-1 py-0.5 hover:text-ink sm:inline-flex">
+      <i data-lucide="folder" class="size-3.5"></i>
+      <span class="js-project-name max-w-[160px] truncate">Acme Production</span>
+    </a>
+    <span class="hidden text-line-strong sm:inline" aria-hidden="true">/</span>
+    <span id="page-title" class="truncate font-medium text-ink">Overview</span>
+  </div>
+
+  <div class="ml-auto flex items-center gap-1.5 sm:gap-2">
+    <button type="button" class="group hidden h-9 w-56 items-center gap-2 rounded-lg border border-line bg-surface px-2.5 text-left text-[13px] text-muted transition hover:border-line-strong hover:bg-sunken lg:flex xl:w-64" data-palette-open>
+      <i data-lucide="search" class="size-4"></i>
+      <span class="sr-only">Search pages and actions.</span>
+      <span class="flex-1">Search&hellip;</span>
+      <span class="kbd js-kbd hidden sm:inline-flex">Ctrl K</span>
+    </button>
+
+    <button type="button" class="btn btn-ghost btn-icon lg:hidden" data-palette-open aria-label="Search">
+      <i data-lucide="search" class="size-[18px]"></i>
+    </button>
+
+    <a href="%BASE%app/notifications.html" class="btn btn-ghost btn-icon relative hidden sm:inline-flex" aria-label="Notifications">
+      <i data-lucide="bell" class="size-[18px]"></i>
+      <span class="absolute right-2 top-2 size-1.5 rounded-full bg-accent ring-2 ring-canvas"></span>
+    </a>
+
+    <div class="relative" x-data="{
+        open: false,
+        mode: Mira.themeMode,
+        init() { window.addEventListener('mira:theme', (e) => { this.mode = e.detail; }); },
+        choose(m) { Mira.setTheme(m); this.mode = m; this.open = false; }
+      }" @click.outside="open = false" @keydown.escape.prevent="open = false">
+      <button type="button" class="btn btn-ghost btn-icon" @click="open = !open" :aria-expanded="open" aria-haspopup="menu" aria-label="Change theme">
+        <span x-show="mode !== 'dark'" x-cloak><i data-lucide="sun" class="size-[18px]"></i></span>
+        <span x-show="mode === 'dark'" x-cloak><i data-lucide="moon" class="size-[18px]"></i></span>
+        <span x-show="mode === 'system'" class="sr-only">System theme</span>
+      </button>
+      <div x-show="open" x-cloak x-transition.opacity.duration.120ms class="menu absolute right-0 top-[calc(100%+6px)]" role="menu" aria-label="Theme">
+        <p class="px-2.5 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted">Theme</p>
+        <button type="button" class="menu-item" role="menuitemradio" :aria-checked="mode === 'light'" @click="choose('light')">
+          <i data-lucide="sun"></i>Light
+          <span class="ml-auto" x-show="mode === 'light'"><i data-lucide="check" class="!size-3.5"></i></span>
+        </button>
+        <button type="button" class="menu-item" role="menuitemradio" :aria-checked="mode === 'dark'" @click="choose('dark')">
+          <i data-lucide="moon"></i>Dark
+          <span class="ml-auto" x-show="mode === 'dark'"><i data-lucide="check" class="!size-3.5"></i></span>
+        </button>
+        <button type="button" class="menu-item" role="menuitemradio" :aria-checked="mode === 'system'" @click="choose('system')">
+          <i data-lucide="monitor"></i>System
+          <span class="ml-auto" x-show="mode === 'system'"><i data-lucide="check" class="!size-3.5"></i></span>
+        </button>
+      </div>
+    </div>
+
+    <a href="%BASE%app/notifications.html?compose=1" class="btn btn-primary btn-sm hidden md:inline-flex">
+      <i data-lucide="send" class="size-[15px]"></i>Send notification
+    </a>
+
+    <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.prevent="open = false">
+      <button type="button" class="ml-0.5 flex items-center gap-2 rounded-lg p-0.5 transition hover:opacity-90" @click="open = !open" :aria-expanded="open" aria-haspopup="menu">
+        <span class="grid size-8 place-items-center rounded-full bg-ink text-[11px] font-semibold text-canvas">KS</span>
+        <span class="sr-only">Account menu</span>
+      </button>
+      <div x-show="open" x-cloak x-transition.opacity.duration.120ms class="menu absolute right-0 top-[calc(100%+8px)] !w-60" role="menu" aria-label="Account">
+        <div class="px-2.5 py-2">
+          <p class="text-[13px] font-semibold text-ink">Kabir Sharma</p>
+          <p class="truncate text-[11.5px] text-muted">kabir@acme.dev</p>
+        </div>
+        <div class="menu-sep"></div>
+        <a href="%BASE%app/settings.html" class="menu-item" role="menuitem"><i data-lucide="user"></i>Profile &amp; preferences</a>
+        <a href="%BASE%app/settings.html#security" class="menu-item" role="menuitem"><i data-lucide="shield-check"></i>Security</a>
+        <a href="%BASE%docs.html" class="menu-item" role="menuitem"><i data-lucide="book-open"></i>Documentation</a>
+        <div class="menu-sep"></div>
+        <a href="%BASE%login.html" class="menu-item" role="menuitem"><i data-lucide="log-out"></i>Sign out</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<dialog id="command-palette" class="modal max-w-xl" aria-labelledby="palette-title">
+  <h2 id="palette-title" class="sr-only">Search pages and actions</h2>
+  <div class="flex items-center gap-2 border-b border-line px-4">
+    <i data-lucide="search" class="size-4 shrink-0 text-muted"></i>
+    <label for="palette-input" class="sr-only">Search pages and actions</label>
+    <input id="palette-input" class="palette-input" type="text" placeholder="Jump to a page or run an action&hellip;" autocomplete="off" spellcheck="false" role="combobox" aria-expanded="true" aria-controls="palette-results">
+    <span class="kbd shrink-0">ESC</span>
+  </div>
+  <div id="palette-results" class="max-h-[340px] overflow-y-auto p-2" role="listbox" aria-label="Results"></div>
+  <div class="flex items-center gap-4 border-t border-line bg-sunken/50 px-4 py-2 text-[11px] text-muted">
+    <span class="flex items-center gap-1"><span class="kbd">&uarr;</span><span class="kbd">&darr;</span>navigate</span>
+    <span class="flex items-center gap-1"><span class="kbd">&crarr;</span>select</span>
+  </div>
+</dialog>

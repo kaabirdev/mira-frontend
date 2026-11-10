@@ -1,0 +1,142 @@
+<!-- @title Delivery logs · Mira -->
+<!-- @desc Inspect every delivery attempt, provider response and retry. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="deliveries" data-title="Delivery logs">
+<!-- @include partials/sprite.html -->
+<!-- @include partials/sidebar.html -->
+
+<div class="flex min-h-screen flex-col lg:pl-[264px]">
+  <!-- @include partials/topbar.html -->
+
+  <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-page space-y-5">
+
+      <div class="page-header">
+        <div>
+          <h1 class="text-[24px] font-semibold leading-tight tracking-[-0.03em]">Delivery logs</h1>
+          <p class="mt-1.5 text-[13.5px] text-muted">Every unit is tracked from queue acceptance to the provider response.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <button type="button" class="btn btn-secondary btn-sm" id="export-deliveries"><i data-lucide="download" class="size-[15px]"></i>Export CSV</button>
+          <button type="button" class="btn btn-ghost btn-sm" id="refresh-deliveries"><i data-lucide="refresh-cw" class="size-[15px]"></i>Refresh</button>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-x-4 gap-y-2 rounded-lg border border-line bg-surface px-4 py-3 text-[11.5px] shadow-card" aria-label="Delivery status legend">
+        <span class="font-medium text-ink">Statuses</span>
+        <span class="flex items-center gap-1.5 text-sub"><span class="dot text-muted"></span>Pending</span>
+        <span class="flex items-center gap-1.5 text-sub"><span class="dot text-muted"></span>Queued</span>
+        <span class="flex items-center gap-1.5 text-sub"><span class="dot text-info"></span>Processing</span>
+        <span class="flex items-center gap-1.5 text-sub"><span class="dot text-success"></span>Accepted</span>
+        <span class="flex items-center gap-1.5 text-sub"><span class="dot text-danger"></span>Failed</span>
+        <span class="flex items-center gap-1.5 text-sub"><span class="dot text-warning"></span>Expired</span>
+        <span class="ml-auto hidden text-muted sm:inline">Accepted = provider accepted, not confirmed display</span>
+      </div>
+
+      <section class="card" aria-labelledby="delivery-list-title">
+        <h2 id="delivery-list-title" class="sr-only">Delivery attempts</h2>
+        <div class="flex flex-col gap-3 border-b border-line p-4 lg:flex-row lg:items-center">
+          <div class="relative w-full lg:max-w-xs">
+            <i data-lucide="search" class="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted"></i>
+            <label class="sr-only" for="delivery-search">Search deliveries</label>
+            <input type="search" id="delivery-search" class="input pl-9" placeholder="Search ID, notification or subscriber&hellip;">
+          </div>
+          <div class="flex flex-1 flex-wrap gap-2">
+            <label class="sr-only" for="filter-delivery-status">Filter by status</label>
+            <select id="filter-delivery-status" class="select select-sm w-auto min-w-[140px]" data-filter="status">
+              <option value="">All statuses</option>
+              <option value="accepted">Accepted</option>
+              <option value="processing">Processing</option>
+              <option value="queued">Queued</option>
+              <option value="failed">Failed</option>
+              <option value="pending">Pending</option>
+              <option value="expired">Expired</option>
+            </select>
+            <label class="sr-only" for="filter-provider">Filter by provider</label>
+            <select id="filter-provider" class="select select-sm w-auto min-w-[150px]" data-filter="provider">
+              <option value="">All providers</option>
+              <option value="Web Push">Web Push</option>
+              <option value="FCM">FCM</option>
+              <option value="APNs">APNs</option>
+            </select>
+            <button type="button" class="btn btn-ghost btn-sm" data-clear-filters><i data-lucide="x" class="size-3.5"></i>Reset</button>
+          </div>
+          <p class="text-[12px] text-muted lg:ml-auto" id="delivery-count" aria-live="polite">34 results</p>
+        </div>
+
+        <div class="table-wrap">
+          <table class="data-table min-w-[980px]">
+            <caption class="sr-only">Delivery attempts grouped by subscriber</caption>
+            <thead>
+              <tr>
+                <th scope="col"><button type="button" class="sort-btn" data-sort="id">Delivery<i data-lucide="chevrons-up-down" class="sort-icon size-3"></i></button></th>
+                <th scope="col">Notification</th>
+                <th scope="col">Subscriber</th>
+                <th scope="col"><button type="button" class="sort-btn" data-sort="provider">Provider<i data-lucide="chevrons-up-down" class="sort-icon size-3"></i></button></th>
+                <th scope="col"><button type="button" class="sort-btn" data-sort="status">Status<i data-lucide="chevrons-up-down" class="sort-icon size-3"></i></button></th>
+                <th scope="col" class="text-right"><button type="button" class="sort-btn" data-sort="attempts">Attempts<i data-lucide="chevrons-up-down" class="sort-icon size-3"></i></button></th>
+                <th scope="col" class="text-right"><button type="button" class="sort-btn" data-sort="latency">Latency<i data-lucide="chevrons-up-down" class="sort-icon size-3"></i></button></th>
+                <th scope="col"><button type="button" class="sort-btn" data-sort="createdAt">Time<i data-lucide="chevrons-up-down" class="sort-icon size-3"></i></button></th>
+              </tr>
+            </thead>
+            <tbody id="deliveries-body"></tbody>
+          </table>
+        </div>
+        <div id="delivery-pagination"></div>
+      </section>
+
+      <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div class="rounded-lg border border-line bg-surface p-4 shadow-card">
+          <p class="flex items-start gap-2 text-[12px] leading-relaxed text-sub"><i data-lucide="shield-check" class="mt-0.5 size-4 shrink-0 text-muted"></i><span><span class="font-medium text-ink">Retries never double-charge.</span> Retry attempts reuse the original quota reservation and delivery record. Invalid tokens are cleaned up automatically.</span></p>
+        </div>
+        <div class="rounded-lg border border-line bg-surface p-4 shadow-card">
+          <p class="flex items-start gap-2 text-[12px] leading-relaxed text-sub"><i data-lucide="search" class="mt-0.5 size-4 shrink-0 text-muted"></i><span><span class="font-medium text-ink">Need a request trace?</span> Every API response includes an <code class="inline-code">X-Request-ID</code> header you can match against delivery logs.</span></p>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Delivery detail -->
+<dialog id="delivery-detail" class="modal modal-wide" aria-labelledby="delivery-detail-title">
+  <div class="modal-header">
+    <div class="min-w-0">
+      <div class="flex flex-wrap items-center gap-2">
+        <h2 id="delivery-detail-title" class="font-mono text-[13px] font-semibold" data-delivery-id>dlv_…</h2>
+        <span data-delivery-status></span>
+      </div>
+      <p class="mt-1 text-[12px] text-muted">Delivery attempt detail</p>
+    </div>
+    <button type="button" class="btn btn-ghost btn-icon !size-8" data-dialog-close aria-label="Close dialog"><i data-lucide="x" class="size-4"></i></button>
+  </div>
+  <div class="modal-body space-y-5">
+    <dl class="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+      <div><dt class="text-[11px] font-medium uppercase tracking-wider text-muted">Notification</dt><dd class="mt-1 text-[13px] text-ink" data-delivery-notification>—</dd></div>
+      <div><dt class="text-[11px] font-medium uppercase tracking-wider text-muted">Subscriber</dt><dd class="mt-1 font-mono text-[12px] text-ink" data-delivery-subscriber>—</dd></div>
+      <div><dt class="text-[11px] font-medium uppercase tracking-wider text-muted">Provider</dt><dd class="mt-1 text-[13px] text-ink" data-delivery-provider>—</dd></div>
+      <div><dt class="text-[11px] font-medium uppercase tracking-wider text-muted">Attempts</dt><dd class="mt-1 text-[13px] text-ink" data-delivery-attempts>—</dd></div>
+      <div><dt class="text-[11px] font-medium uppercase tracking-wider text-muted">Latency</dt><dd class="mt-1 font-mono text-[12px] text-ink" data-delivery-latency>—</dd></div>
+      <div><dt class="text-[11px] font-medium uppercase tracking-wider text-muted">Created</dt><dd class="mt-1 text-[13px] text-ink" data-delivery-created>—</dd></div>
+    </dl>
+    <div>
+      <div class="flex items-center justify-between">
+        <p class="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">Provider response</p>
+        <button type="button" class="btn btn-ghost btn-sm !h-7 !px-2" data-copy-target="#delivery-response"><i data-lucide="copy" class="size-3"></i>Copy</button>
+      </div>
+      <div class="code-block mt-2"><pre class="!max-h-[220px]"><code id="delivery-response"></code></pre></div>
+    </div>
+    <div>
+      <p class="mb-2 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">Attempt timeline</p>
+      <ol id="attempt-timeline" class="space-y-2.5 text-[12px] text-sub"></ol>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm" data-dialog-close>Close</button>
+    <button type="button" class="btn btn-primary btn-sm" id="retry-delivery"><i data-lucide="refresh-cw" class="size-[15px]"></i>Retry delivery</button>
+  </div>
+</dialog>
+
+<!-- @include partials/app-scripts.html -->
+</body>
+</html>

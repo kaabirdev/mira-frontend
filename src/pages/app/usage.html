@@ -1,0 +1,206 @@
+<!-- @title Usage & billing · Mira -->
+<!-- @desc Daily quota, usage history and plan details for your project. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="usage" data-title="Usage &amp; billing">
+<!-- @include partials/sprite.html -->
+<!-- @include partials/sidebar.html -->
+
+<div class="flex min-h-screen flex-col lg:pl-[264px]">
+  <!-- @include partials/topbar.html -->
+
+  <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-page space-y-5">
+
+      <div class="page-header">
+        <div>
+          <div class="flex flex-wrap items-center gap-2.5">
+            <h1 class="text-[24px] font-semibold leading-tight tracking-[-0.03em]">Usage &amp; billing</h1>
+            <span class="badge badge-neutral">Free plan</span>
+          </div>
+          <p class="mt-1.5 text-[13.5px] text-muted">One notification to 100 subscribers consumes 100 delivery units &mdash; not one request.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="../docs.html#quotas" class="btn btn-secondary btn-sm"><i data-lucide="book-open" class="size-[15px]"></i>Quota docs</a>
+          <button type="button" class="btn btn-primary btn-sm" data-upgrade-open><i data-lucide="zap" class="size-[15px]"></i>Upgrade plan</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <section class="card xl:col-span-2" aria-labelledby="today-usage-title">
+          <div class="card-header">
+            <div>
+              <h2 id="today-usage-title" class="card-title">Today&rsquo;s usage</h2>
+              <p class="card-sub">Resets at 00:00 UTC &middot; in 6 hours</p>
+            </div>
+            <span class="badge badge-warning"><span class="dot"></span>Warning threshold reached</span>
+          </div>
+          <div class="card-body">
+            <div class="flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:gap-8">
+              <div class="relative shrink-0">
+                <svg class="size-[148px] -rotate-90" viewBox="0 0 128 128" role="img" aria-label="812 of 1,000 daily delivery units used, 81 percent">
+                  <circle cx="64" cy="64" r="54" fill="none" stroke="rgb(var(--c-sunken))" stroke-width="10"/>
+                  <circle id="usage-ring" cx="64" cy="64" r="54" fill="none" stroke="currentColor" class="text-warning" stroke-width="10" stroke-linecap="round" stroke-dasharray="339.292" stroke-dashoffset="64.466"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                  <span class="text-[27px] font-semibold leading-none tracking-[-0.03em] text-ink">81%</span>
+                  <span class="mt-1 text-[10.5px] uppercase tracking-[0.1em] text-muted">used today</span>
+                </div>
+              </div>
+              <div class="w-full flex-1">
+                <div class="flex items-end justify-between">
+                  <div>
+                    <p class="text-[12px] text-muted">Delivery units used</p>
+                    <p class="mt-1 font-mono text-[22px] font-medium tracking-[-0.02em] text-ink">812 <span class="text-[13px] text-muted">/ 1,000</span></p>
+                  </div>
+                  <p class="font-mono text-[11px] text-muted">188 remaining</p>
+                </div>
+                <div class="mt-3 h-2 overflow-hidden rounded-full bg-sunken" role="progressbar" aria-label="Daily quota used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="81">
+                  <div class="h-full rounded-full bg-warning" style="width: 81%"></div>
+                </div>
+                <dl class="mt-5 grid grid-cols-3 gap-3 border-t border-line pt-4">
+                  <div><dt class="text-[11px] text-muted">Accepted</dt><dd class="mt-0.5 font-mono text-[14px] text-ink">802</dd></div>
+                  <div><dt class="text-[11px] text-muted">Failed</dt><dd class="mt-0.5 font-mono text-[14px] text-ink">10</dd></div>
+                  <div><dt class="text-[11px] text-muted">Reserved</dt><dd class="mt-0.5 font-mono text-[14px] text-ink">0</dd></div>
+                </dl>
+                <p class="mt-4 flex items-start gap-2 rounded-lg bg-warning-soft p-3 text-[11.5px] leading-relaxed text-sub"><i data-lucide="triangle-alert" class="mt-0.5 size-3.5 shrink-0 text-warning"></i><span>At 80% Mira emits a <code class="inline-code">quota.warning</code> webhook. At 100% new sends are rejected with <code class="inline-code">429</code> until the daily reset.</span></p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card flex flex-col" aria-labelledby="plan-title">
+          <div class="card-header">
+            <div>
+              <h2 id="plan-title" class="card-title">Current plan</h2>
+              <p class="card-sub">Free forever</p>
+            </div>
+            <span class="badge badge-primary">Free</span>
+          </div>
+          <div class="card-body flex flex-1 flex-col">
+            <p class="flex items-baseline gap-1"><span class="text-[30px] font-semibold tracking-[-0.04em] text-ink">$0</span><span class="text-[12.5px] text-muted">/ month</span></p>
+            <p class="mt-1 text-[12px] text-muted">1,000 delivery units per day, per project.</p>
+            <ul class="mt-4 space-y-2.5 border-t border-line pt-4">
+              <li class="flex items-start gap-2 text-[12px] text-sub"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>Web Push, FCM and APNs</li>
+              <li class="flex items-start gap-2 text-[12px] text-sub"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>2 projects on this plan</li>
+              <li class="flex items-start gap-2 text-[12px] text-sub"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>Delivery logs &middot; 7 days</li>
+              <li class="flex items-start gap-2 text-[12px] text-sub"><i data-lucide="check" class="mt-0.5 size-3.5 shrink-0 text-success"></i>1,000 subscribers per project</li>
+            </ul>
+            <button type="button" class="btn btn-primary btn-sm mt-5 w-full" data-upgrade-open>Upgrade</button>
+            <p class="mt-2 text-center text-[10.5px] text-muted">No card required</p>
+          </div>
+        </section>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <div class="stat-card"><p class="stat-label"><i data-lucide="gauge" class="size-3.5"></i>Today</p><p class="stat-value">812</p><p class="stat-meta">81% of 1,000 units</p></div>
+        <div class="stat-card"><p class="stat-label"><i data-lucide="send" class="size-3.5"></i>Delivered · 30d</p><p class="stat-value">19,842</p><p class="stat-meta">across 128 notifications</p></div>
+        <div class="stat-card"><p class="stat-label"><i data-lucide="circle-x" class="size-3.5"></i>Failed · 30d</p><p class="stat-value">274</p><p class="stat-meta">1.36% of attempts</p></div>
+        <div class="stat-card"><p class="stat-label"><i data-lucide="activity" class="size-3.5"></i>Avg daily units</p><p class="stat-value">670</p><p class="stat-meta">67% of daily allowance</p></div>
+      </div>
+
+      <section class="card" aria-labelledby="usage-chart-title">
+        <div class="card-header">
+          <div>
+            <h2 id="usage-chart-title" class="card-title">Usage history</h2>
+            <p class="card-sub">Daily delivery units against the plan limit</p>
+          </div>
+          <span class="text-[11px] text-muted">Last 14 days</span>
+        </div>
+        <div class="p-5 pt-4"><div class="h-[250px]"><canvas id="chart-usage" aria-label="Bar chart of daily delivery units with the daily limit line"></canvas></div></div>
+      </section>
+
+      <div class="grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <section class="card xl:col-span-2" aria-labelledby="usage-history-title">
+          <div class="card-header">
+            <div>
+              <h2 id="usage-history-title" class="card-title">Daily breakdown</h2>
+              <p class="card-sub">Newest first</p>
+            </div>
+            <button type="button" class="btn btn-ghost btn-sm" id="export-usage"><i data-lucide="download" class="size-3.5"></i>Export CSV</button>
+          </div>
+          <div class="table-wrap">
+            <table class="data-table min-w-[520px]">
+              <caption class="sr-only">Daily usage history</caption>
+              <thead><tr><th scope="col">Date</th><th scope="col" class="text-right">Units</th><th scope="col" class="text-right">% of quota</th><th scope="col">Status</th></tr></thead>
+              <tbody id="usage-history-body"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="card" aria-labelledby="billing-title">
+          <div class="card-header">
+            <div>
+              <h2 id="billing-title" class="card-title">Billing history</h2>
+              <p class="card-sub">Invoices and receipts</p>
+            </div>
+          </div>
+          <div class="empty-state !py-10">
+            <span class="empty-icon"><i data-lucide="receipt" class="size-5"></i></span>
+            <p class="text-[13px] font-medium text-ink">No invoices yet</p>
+            <p class="mt-1 max-w-[220px] text-[11.5px] leading-relaxed text-muted">You&rsquo;re on the Free plan. Invoices appear here after your first paid billing cycle.</p>
+            <button type="button" class="btn btn-secondary btn-sm mt-4" data-upgrade-open>Compare plans</button>
+          </div>
+        </section>
+      </div>
+
+      <section class="card card-body" aria-labelledby="quota-rules-title">
+        <h2 id="quota-rules-title" class="text-[14px] font-semibold text-ink">How quota accounting works</h2>
+        <div class="mt-3 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-lg border border-line bg-sunken/40 p-3"><p class="flex items-center gap-1.5 text-[11.5px] font-medium text-ink"><i data-lucide="lock" class="size-3.5 text-muted"></i>Reserved atomically</p><p class="mt-1 text-[11px] leading-relaxed text-muted">Concurrent requests cannot overspend. Units are reserved inside a transaction before jobs are dispatched.</p></div>
+          <div class="rounded-lg border border-line bg-sunken/40 p-3"><p class="flex items-center gap-1.5 text-[11.5px] font-medium text-ink"><i data-lucide="refresh-cw" class="size-3.5 text-muted"></i>Retries are free</p><p class="mt-1 text-[11px] leading-relaxed text-muted">A retry reuses the original reservation. Failed attempts never consume quota twice.</p></div>
+          <div class="rounded-lg border border-line bg-sunken/40 p-3"><p class="flex items-center gap-1.5 text-[11.5px] font-medium text-ink"><i data-lucide="calendar" class="size-3.5 text-muted"></i>Daily reset</p><p class="mt-1 text-[11px] leading-relaxed text-muted">Allowance resets at 00:00 UTC. Unused units do not roll over.</p></div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<!-- Upgrade -->
+<dialog id="upgrade-dialog" class="modal modal-wide" aria-labelledby="upgrade-title">
+  <div class="modal-header">
+    <div>
+      <h2 id="upgrade-title" class="text-[16px] font-semibold tracking-[-0.02em]">Upgrade your plan</h2>
+      <p class="mt-0.5 text-[12.5px] text-muted">More daily units, longer log retention and higher limits.</p>
+    </div>
+    <button type="button" class="btn btn-ghost btn-icon !size-8" data-dialog-close aria-label="Close dialog"><i data-lucide="x" class="size-4"></i></button>
+  </div>
+  <div class="modal-body">
+    <div class="grid gap-3 sm:grid-cols-2">
+      <label class="relative flex cursor-pointer flex-col rounded-xl border border-line p-4 transition hover:bg-sunken/50 has-[:checked]:border-primary has-[:checked]:bg-primary-soft/40">
+        <input type="radio" name="plan" value="Growth" class="sr-only" checked>
+        <span class="flex items-center justify-between"><span class="text-[13px] font-semibold text-ink">Growth</span><span class="badge badge-primary">Popular</span></span>
+        <span class="mt-2 flex items-baseline gap-1"><span class="text-[24px] font-semibold tracking-[-0.03em]">$19</span><span class="text-[11.5px] text-muted">/ month</span></span>
+        <span class="mt-1 text-[11.5px] text-muted">50,000 units / day</span>
+        <span class="mt-3 space-y-1.5 border-t border-line pt-3 text-[11.5px] text-sub">
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>10 projects</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>30-day delivery logs</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>Webhooks &amp; analytics</span>
+        </span>
+      </label>
+      <label class="relative flex cursor-pointer flex-col rounded-xl border border-line p-4 transition hover:bg-sunken/50 has-[:checked]:border-primary has-[:checked]:bg-primary-soft/40">
+        <input type="radio" name="plan" value="Scale" class="sr-only">
+        <span class="flex items-center justify-between"><span class="text-[13px] font-semibold text-ink">Scale</span><span class="badge badge-neutral">Teams</span></span>
+        <span class="mt-2 flex items-baseline gap-1"><span class="text-[24px] font-semibold tracking-[-0.03em]">$99</span><span class="text-[11.5px] text-muted">/ month</span></span>
+        <span class="mt-1 text-[11.5px] text-muted">500,000 units / day</span>
+        <span class="mt-3 space-y-1.5 border-t border-line pt-3 text-[11.5px] text-sub">
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>Unlimited projects</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>90-day delivery logs</span>
+          <span class="flex items-center gap-1.5"><i data-lucide="check" class="size-3.5 text-success"></i>Priority queue workers</span>
+        </span>
+      </label>
+    </div>
+    <div class="mt-4 flex items-start gap-2 rounded-lg border border-line bg-sunken/60 p-3">
+      <i data-lucide="info" class="mt-0.5 size-3.5 shrink-0 text-muted"></i>
+      <p class="text-[11.5px] leading-relaxed text-sub">This is a frontend preview. No payment is collected and no plan is changed.</p>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary btn-sm" data-dialog-close>Not now</button>
+    <button type="button" class="btn btn-primary btn-sm" id="start-trial"><i data-lucide="zap" class="size-[15px]"></i>Start 14-day trial</button>
+  </div>
+</dialog>
+
+<!-- @include partials/app-scripts.html -->
+</body>
+</html>

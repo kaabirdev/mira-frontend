@@ -1,0 +1,644 @@
+<!-- @title Documentation · Mira -->
+<!-- @desc Mira REST API reference: authentication, subscribers, notifications, delivery statuses, errors, webhooks and quotas. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="docs">
+<!-- @include partials/sprite.html -->
+
+<header class="sticky top-0 z-40 border-b border-line bg-canvas/95">
+  <div class="container-page flex h-16 items-center gap-3">
+    <a href="index.html" class="flex items-center gap-2.5 rounded-lg" aria-label="Mira home">
+      <span class="brand-mark size-8"><svg class="size-5" aria-hidden="true"><use href="#mira-mark"/></svg></span>
+      <span class="text-[19px] font-bold leading-none tracking-[-0.045em] text-ink">mira</span>
+    </a>
+    <span class="ml-1 hidden rounded border border-line px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-wider text-muted sm:inline">docs</span>
+
+    <nav class="ml-6 hidden items-center gap-0.5 lg:flex" aria-label="Main">
+      <a href="index.html#product" class="nav-link">Product</a>
+      <a href="index.html#pricing" class="nav-link">Pricing</a>
+      <a href="docs.html" class="nav-link text-ink" aria-current="page">Docs</a>
+      <a href="status.html" class="nav-link">Status</a>
+    </nav>
+
+    <div class="ml-auto flex items-center gap-1.5">
+      <button type="button" class="btn btn-ghost btn-icon" data-theme-toggle aria-label="Toggle color theme">
+        <i data-lucide="sun-moon" class="size-[18px]"></i>
+      </button>
+      <a href="login.html" class="btn btn-ghost btn-sm hidden sm:inline-flex">Sign in</a>
+      <a href="app/index.html" class="btn btn-primary btn-sm">Dashboard<i data-lucide="arrow-right" class="size-3.5"></i></a>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="container-page">
+  <div class="flex flex-col gap-8 py-8 lg:flex-row lg:gap-10 lg:py-10">
+
+    <!-- Docs navigation -->
+    <aside class="lg:w-[232px] lg:shrink-0">
+      <div class="lg:sticky lg:top-24">
+        <label for="docs-filter" class="sr-only">Filter documentation sections</label>
+        <div class="relative hidden lg:block">
+          <i data-lucide="search" class="pointer-events-none absolute left-3 top-1/2 size-3.5 -translate-y-1/2 text-muted"></i>
+          <input id="docs-filter" type="search" class="input h-9 pl-9 text-[13px]" placeholder="Filter sections&hellip;" autocomplete="off" spellcheck="false" aria-controls="docs-nav">
+        </div>
+
+        <nav id="docs-nav" class="mt-5 hidden lg:block" aria-label="Documentation sections">
+          <p class="px-3 pb-1.5 text-[10px] font-semibold uppercase tracking-[0.11em] text-muted" data-doc-group>Getting started</p>
+          <div class="space-y-px">
+            <a class="doc-link" data-doc-link="introduction" href="#introduction">Introduction</a>
+            <a class="doc-link" data-doc-link="authentication" href="#authentication">Authentication</a>
+            <a class="doc-link" data-doc-link="projects" href="#projects">Projects &amp; environments</a>
+          </div>
+
+          <p class="px-3 pb-1.5 pt-4 text-[10px] font-semibold uppercase tracking-[0.11em] text-muted" data-doc-group>Core API</p>
+          <div class="space-y-px">
+            <a class="doc-link" data-doc-link="quickstart" href="#quickstart">Quickstart</a>
+            <a class="doc-link" data-doc-link="subscribers" href="#subscribers">Subscribers</a>
+            <a class="doc-link" data-doc-link="notifications" href="#notifications">Notifications</a>
+            <a class="doc-link" data-doc-link="delivery-statuses" href="#delivery-statuses">Delivery statuses</a>
+            <a class="doc-link" data-doc-link="delivery-logs" href="#delivery-logs">Delivery logs</a>
+          </div>
+
+          <p class="px-3 pb-1.5 pt-4 text-[10px] font-semibold uppercase tracking-[0.11em] text-muted" data-doc-group>Platform</p>
+          <div class="space-y-px">
+            <a class="doc-link" data-doc-link="errors" href="#errors">Errors</a>
+            <a class="doc-link" data-doc-link="webhooks" href="#webhooks">Webhooks</a>
+            <a class="doc-link" data-doc-link="quotas" href="#quotas">Quotas &amp; rate limits</a>
+            <a class="doc-link" data-doc-link="pagination" href="#pagination">Pagination</a>
+            <a class="doc-link" data-doc-link="versioning" href="#versioning">Versioning</a>
+          </div>
+          <p id="docs-filter-empty" class="hidden px-3 py-6 text-[12px] leading-relaxed text-muted">No sections match that filter.</p>
+        </nav>
+
+        <div class="mt-6 hidden rounded-xl border border-line bg-surface p-3 lg:block">
+          <p class="flex items-center gap-2 text-[11.5px] font-medium text-sub"><span class="dot text-success"></span>All systems operational</p>
+          <p class="mt-1.5 font-mono text-[10.5px] text-muted">API p95 &middot; 212 ms</p>
+          <a href="status.html" class="mt-2 inline-flex items-center gap-1 text-[11px] font-medium text-link hover:underline">Status page<i data-lucide="arrow-up-right" class="size-3"></i></a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Article -->
+    <div class="min-w-0 flex-1">
+      <div class="max-w-3xl">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="badge badge-primary">API v1</span>
+          <span class="badge badge-neutral">REST / JSON</span>
+          <span class="text-[11px] text-muted">Updated November 2026</span>
+        </div>
+        <h1 class="mt-4 text-[32px] font-semibold leading-tight tracking-[-0.04em] text-ink sm:text-[38px]">Developer documentation</h1>
+        <p class="mt-3 max-w-2xl text-[14px] leading-relaxed text-sub">Everything required to authenticate, register subscribers, send notifications and verify webhooks. One API covers Web Push, Android and iOS.</p>
+        <div class="mt-6 flex flex-wrap items-center gap-2">
+          <a href="#quickstart" class="btn btn-primary btn-sm">Quickstart<i data-lucide="arrow-right" class="size-3.5"></i></a>
+          <a href="app/api-keys.html" class="btn btn-secondary btn-sm"><i data-lucide="key-round" class="size-3.5"></i>Get an API key</a>
+          <a href="status.html" class="btn btn-ghost btn-sm">Service status</a>
+        </div>
+        <div class="mt-6 flex items-start gap-2.5 rounded-lg border border-line bg-sunken/60 px-3.5 py-3">
+          <i data-lucide="terminal" class="mt-0.5 size-4 shrink-0 text-muted"></i>
+          <p class="text-[12px] leading-relaxed text-muted">Base URL <code class="inline-code">https://api.lazytown.dev/v1</code> &middot; all requests and responses are JSON over HTTPS.</p>
+        </div>
+
+        <!-- Mobile TOC -->
+        <details class="group mt-6 rounded-xl border border-line bg-surface lg:hidden">
+          <summary class="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-[13px] font-medium text-ink [&::-webkit-details-marker]:hidden">
+            On this page
+            <i data-lucide="chevron-down" class="size-4 text-muted transition-transform group-open:rotate-180"></i>
+          </summary>
+          <nav class="grid grid-cols-2 gap-x-4 gap-y-1 border-t border-line px-4 py-3" aria-label="Sections on this page">
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#introduction">Introduction</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#authentication">Authentication</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#projects">Projects</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#quickstart">Quickstart</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#subscribers">Subscribers</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#notifications">Notifications</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#delivery-statuses">Delivery statuses</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#delivery-logs">Delivery logs</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#errors">Errors</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#webhooks">Webhooks</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#quotas">Quotas</a>
+            <a class="py-1 text-[12.5px] text-sub hover:text-ink" href="#pagination">Pagination</a>
+          </nav>
+        </details>
+
+        <article class="doc-prose mt-10">
+          <!-- Introduction -->
+          <section id="introduction" class="scroll-mt-24" data-doc-section>
+            <h2>Introduction</h2>
+            <p>Mira is push notification infrastructure for web, Android and iOS. Your backend sends one JSON request and Mira handles provider integrations, queues, retries, quota reservations, delivery records and signed webhooks.</p>
+            <ul>
+              <li><strong>Transport.</strong> HTTPS with JSON request and response bodies. UTF-8 only.</li>
+              <li><strong>Authentication.</strong> A project-scoped bearer key on every request.</li>
+              <li><strong>Idempotency.</strong> Optional <code class="inline-code">Idempotency-Key</code> header on writes.</li>
+              <li><strong>Traceability.</strong> Every response carries a <code class="inline-code">request_id</code>; support can trace it end to end.</li>
+            </ul>
+            <div class="mt-5 rounded-lg border border-info/30 bg-info-soft px-3.5 py-3">
+              <p class="flex items-start gap-2 text-[12.5px] leading-relaxed text-sub"><i data-lucide="info" class="mt-0.5 size-3.5 shrink-0 text-info"></i><span><span class="font-semibold text-ink">Sandbox first.</span> Test keys use the <code class="inline-code">_test_</code> infix and never touch live provider credentials. Nothing sent with a test key can reach a real device.</span></p>
+            </div>
+          </section>
+
+          <!-- Authentication -->
+          <section id="authentication" class="scroll-mt-24" data-doc-section>
+            <h2>Authentication</h2>
+            <p>Every request includes a project key as a bearer token. Keys are environment-specific and only valid for the project that created them.</p>
+
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">http</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-auth" aria-label="Copy authentication example"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-auth"><code><span class="token-fn">Authorization</span>: Bearer mira_sk_live_<span class="token-key">…</span>
+<span class="token-fn">Content-Type</span>: application/json
+<span class="token-fn">Idempotency-Key</span>: launch-2026-11-10</code></pre>
+            </div>
+
+            <h3>Key types</h3>
+            <div class="overflow-x-auto rounded-lg border border-line">
+              <table>
+                <thead>
+                  <tr><th>Prefix</th><th>Where it lives</th><th>Allowed scopes</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><code class="inline-code">mira_sk_live_</code></td><td>Server only. Hashed at rest, never returned again after creation.</td><td>Any scope granted at creation.</td></tr>
+                  <tr><td><code class="inline-code">mira_sk_test_</code></td><td>Server only. Safe for CI, staging and local development.</td><td>Any scope, sandbox providers only.</td></tr>
+                  <tr><td><code class="inline-code">mira_pk_live_</code></td><td>Browser and mobile clients. Public by design.</td><td><code class="inline-code">subscribers:write</code> only.</td></tr>
+                  <tr><td><code class="inline-code">mira_pk_test_</code></td><td>Browser and mobile clients in sandbox.</td><td><code class="inline-code">subscribers:write</code> only.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="mt-3 flex items-start gap-2 text-[12.5px] leading-relaxed text-sub"><i data-lucide="triangle-alert" class="mt-0.5 size-3.5 shrink-0 text-warning"></i><span>A secret key is shown once at creation. Mira stores an HMAC-SHA256 hash with a server-side pepper; it cannot be recovered. Revoke and rotate from <a class="link" href="app/api-keys.html">API keys</a>.</span></p>
+
+            <h3>Scopes</h3>
+            <ul>
+              <li><code class="inline-code">notifications:send</code> &mdash; create and cancel notifications.</li>
+              <li><code class="inline-code">notifications:read</code> &mdash; read notifications and their delivery summaries.</li>
+              <li><code class="inline-code">subscribers:read</code> / <code class="inline-code">subscribers:write</code> &mdash; list and manage subscribers.</li>
+              <li><code class="inline-code">webhooks:manage</code> &mdash; create, rotate and delete webhook endpoints.</li>
+              <li><code class="inline-code">usage:read</code> &mdash; read quota and usage counters.</li>
+            </ul>
+            <p>A request missing a required scope fails with <code class="inline-code">403 insufficient_scope</code>. Publishable keys can never send notifications.</p>
+          </section>
+
+          <!-- Projects -->
+          <section id="projects" class="scroll-mt-24" data-doc-section>
+            <h2>Projects &amp; environments</h2>
+            <p>A project is the isolation boundary. Subscribers, keys, notification records, delivery logs, webhook endpoints and quota all belong to exactly one project. Ownership is checked on every request; a key from one project cannot read another project's records.</p>
+            <ul>
+              <li><strong>Live and test.</strong> Each project has separate keys per environment. Test sends never touch live provider credentials.</li>
+              <li><strong>Quota.</strong> The free allowance is 1,000 delivery units per day, calculated per project, resetting at 00:00 UTC.</li>
+              <li><strong>Rotation.</strong> Multiple keys can be active during a rotation window. Revocation is immediate.</li>
+              <li><strong>Deletion.</strong> Deleting a project revokes its keys immediately and purges delivery logs on the retention schedule.</li>
+            </ul>
+            <p>Project switching in the dashboard is a view change only. It never reuses keys or merges records between projects.</p>
+          </section>
+
+          <!-- Quickstart -->
+          <section id="quickstart" class="scroll-mt-24" data-doc-section>
+            <h2>Quickstart</h2>
+            <p>Three steps from an empty project to an auditable delivery.</p>
+
+            <h3>1. Create a project and secret key</h3>
+            <p>In the dashboard, create a project and generate a secret key with the <code class="inline-code">notifications:send</code> and <code class="inline-code">subscribers:write</code> scopes. Copy the key once, then store it in your server environment:</p>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">.env</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-env" aria-label="Copy environment variable example"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-env"><code><span class="token-key">MIRA_SECRET</span>=mira_sk_live_<span class="token-str">…</span>
+<span class="token-key">MIRA_PUBLISHABLE</span>=mira_pk_live_<span class="token-str">…</span></code></pre>
+            </div>
+
+            <h3>2. Register a subscriber</h3>
+            <p>Browser clients obtain a PushSubscription from the service worker and send it to your backend. Register it with Mira using the publishable key, or proxy the call through your server.</p>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">curl</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-subscriber" aria-label="Copy subscriber example"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-subscriber"><code><span class="token-fn">curl</span> -X POST https://api.lazytown.dev/v1/subscribers \
+  -H <span class="token-str">"Authorization: Bearer mira_sk_live_…"</span> \
+  -H <span class="token-str">"Content-Type: application/json"</span> \
+  -d <span class="token-str">'{
+    "external_id": "user_812",
+    "platform": "web",
+    "web": {
+      "endpoint": "https://fcm.googleapis.com/fcm/send/…",
+      "keys": { "p256dh": "…", "auth": "…" }
+    },
+    "locale": "en-GB",
+    "tags": { "plan": "growth" }
+  }'</span></code></pre>
+            </div>
+
+            <h3>3. Send a notification</h3>
+            <p>Target everyone, a saved segment or specific subscriber IDs. The request returns <code class="inline-code">202 Accepted</code> once quota is reserved and jobs are queued &mdash; not when a device displays it.</p>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">curl</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-send" aria-label="Copy notification example"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-send"><code><span class="token-fn">curl</span> -X POST https://api.lazytown.dev/v1/notifications \
+  -H <span class="token-str">"Authorization: Bearer mira_sk_live_…"</span> \
+  -H <span class="token-str">"Content-Type: application/json"</span> \
+  -H <span class="token-str">"Idempotency-Key: launch-2026-11-10"</span> \
+  -d <span class="token-str">'{
+    "title": "New dashboard is live",
+    "body": "Charts and delivery logs are here.",
+    "url": "https://acme.dev/changelog",
+    "target": { "type": "segment", "id": "seg_active_web" }
+  }'</span>
+
+<span class="token-com">// 202 Accepted</span>
+{
+  <span class="token-key">"id"</span>: <span class="token-str">"ntf_01JCH4K9X2"</span>,
+  <span class="token-key">"status"</span>: <span class="token-str">"queued"</span>,
+  <span class="token-key">"reserved_units"</span>: <span class="token-num">840</span>,
+  <span class="token-key">"request_id"</span>: <span class="token-str">"req_8f31c2"</span>
+}</code></pre>
+            </div>
+            <p class="mt-3">Track the fan-out in <a class="link" href="app/deliveries.html">delivery logs</a> or subscribe to <code class="inline-code">notification.completed</code> webhooks.</p>
+          </section>
+
+          <!-- Subscribers -->
+          <section id="subscribers" class="scroll-mt-24" data-doc-section>
+            <h2>Subscribers</h2>
+            <p><code class="inline-code">POST /v1/subscribers</code> registers a device or browser subscription. Creating with an existing <code class="inline-code">external_id</code> and <code class="inline-code">platform</code> updates that subscriber instead of duplicating it.</p>
+
+            <div class="overflow-x-auto rounded-lg border border-line">
+              <table>
+                <thead>
+                  <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>external_id</td><td>string</td><td>Your stable user ID. Max 191 characters.</td></tr>
+                  <tr><td>platform</td><td>enum</td><td><code class="inline-code">web</code>, <code class="inline-code">android</code> or <code class="inline-code">ios</code>.</td></tr>
+                  <tr><td>web.endpoint</td><td>string</td><td>Web Push endpoint URL from the PushSubscription.</td></tr>
+                  <tr><td>web.keys.p256dh</td><td>string</td><td>Base64url public key from the subscription.</td></tr>
+                  <tr><td>web.keys.auth</td><td>string</td><td>Base64url auth secret from the subscription.</td></tr>
+                  <tr><td>token</td><td>string</td><td>FCM registration token or APNs device token. Required for mobile.</td></tr>
+                  <tr><td>locale</td><td>string</td><td>BCP 47 locale, e.g. <code class="inline-code">en-GB</code>.</td></tr>
+                  <tr><td>tags</td><td>object</td><td>Flat key/value pairs used for segmentation. Max 20 keys.</td></tr>
+                  <tr><td>metadata</td><td>object</td><td>Arbitrary JSON you can read back. Never used for targeting.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Browser registration</h3>
+            <p>Serve your service worker, request permission from a user gesture, then forward the subscription to your backend. Never expose a secret key in client code.</p>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">javascript</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-browser" aria-label="Copy browser registration example"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-browser"><code><span class="token-fn">const</span> registration = <span class="token-fn">await</span> navigator.serviceWorker.register(<span class="token-str">'/sw.js'</span>);
+<span class="token-fn">const</span> permission = <span class="token-fn">await</span> Notification.requestPermission();
+<span class="token-fn">if</span> (permission !== <span class="token-str">'granted'</span>) <span class="token-fn">throw new</span> Error(<span class="token-str">'Permission denied'</span>);
+
+<span class="token-fn">const</span> subscription = <span class="token-fn">await</span> registration.pushManager.subscribe({
+  userVisibleOnly: <span class="token-key">true</span>,
+  applicationServerKey: <span class="token-str">'&lt;VAPID public key&gt;'</span>,
+});
+
+<span class="token-fn">await</span> fetch(<span class="token-str">'/api/push/subscribe'</span>, {
+  method: <span class="token-str">'POST'</span>,
+  headers: { <span class="token-str">'Content-Type'</span>: <span class="token-str">'application/json'</span> },
+  body: JSON.stringify(subscription),
+});</code></pre>
+            </div>
+
+            <h3>List, update and remove</h3>
+            <ul>
+              <li><code class="inline-code">GET /v1/subscribers</code> &mdash; cursor paginated, filter by <code class="inline-code">platform</code>, <code class="inline-code">tag</code> or <code class="inline-code">status</code>.</li>
+              <li><code class="inline-code">PATCH /v1/subscribers/{id}</code> &mdash; update tags, locale or metadata.</li>
+              <li><code class="inline-code">DELETE /v1/subscribers/{id}</code> &mdash; mark unsubscribed and stop sending immediately.</li>
+            </ul>
+            <p>Tokens rejected as permanently invalid (for example FCM <code class="inline-code">UNREGISTERED</code> or APNs <code class="inline-code">BadDeviceToken</code>) are marked expired and stop consuming quota on later sends.</p>
+          </section>
+
+          <!-- Notifications -->
+          <section id="notifications" class="scroll-mt-24" data-doc-section>
+            <h2>Notifications</h2>
+            <p><code class="inline-code">POST /v1/notifications</code> creates a notification and fans it out asynchronously. The response is <code class="inline-code">202</code> after validation, quota reservation and queueing.</p>
+
+            <div class="overflow-x-auto rounded-lg border border-line">
+              <table>
+                <thead>
+                  <tr><th>Field</th><th>Type</th><th>Notes</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>title</td><td>string</td><td>Required. 1&ndash;120 characters.</td></tr>
+                  <tr><td>body</td><td>string</td><td>Required. 1&ndash;500 characters.</td></tr>
+                  <tr><td>url</td><td>string</td><td>Absolute HTTPS URL opened on click.</td></tr>
+                  <tr><td>icon</td><td>string</td><td>Absolute HTTPS image URL, at least 192&times;192.</td></tr>
+                  <tr><td>target</td><td>object</td><td><code class="inline-code">all</code>, <code class="inline-code">segment</code> or <code class="inline-code">subscribers</code>.</td></tr>
+                  <tr><td>data</td><td>object</td><td>Custom payload available in the service worker. Max 4 KB.</td></tr>
+                  <tr><td>schedule_at</td><td>ISO 8601</td><td>Optional future UTC timestamp. Max 30 days ahead.</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Targeting</h3>
+            <ul>
+              <li><code class="inline-code">{ "type": "all" }</code> &mdash; every active subscriber in the project.</li>
+              <li><code class="inline-code">{ "type": "segment", "id": "seg_active_web" }</code> &mdash; a saved segment evaluated at send time.</li>
+              <li><code class="inline-code">{ "type": "subscribers", "ids": ["sub_9f2c", "sub_4a81"] }</code> &mdash; explicit subscriber IDs, max 1,000 per request.</li>
+            </ul>
+
+            <h3>Idempotency</h3>
+            <p>Send an <code class="inline-code">Idempotency-Key</code> header on creation. Repeating the same key with the same body returns the original response and never creates a duplicate send. Reusing a key with a different body returns <code class="inline-code">409 idempotency_conflict</code>. Keys are retained for 24 hours.</p>
+
+            <h3>Cancellation</h3>
+            <p><code class="inline-code">POST /v1/notifications/{id}/cancel</code> cancels any jobs that have not started processing. Already accepted deliveries cannot be recalled; the response reports how many jobs were cancelled.</p>
+          </section>
+
+          <!-- Delivery statuses -->
+          <section id="delivery-statuses" class="scroll-mt-24" data-doc-section>
+            <h2>Delivery statuses</h2>
+            <p>Status applies per notification and per delivery record. Only the four terminal states leave the pipeline; everything else is still in progress.</p>
+
+            <div class="overflow-x-auto rounded-lg border border-line">
+              <table>
+                <thead>
+                  <tr><th>Status</th><th>Meaning</th><th>Terminal</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><span class="badge badge-warning">Pending</span></td><td>Record created, awaiting validation and quota reservation.</td><td>No</td></tr>
+                  <tr><td><span class="badge badge-neutral">Queued</span></td><td>Quota reserved and the job is waiting on a provider worker.</td><td>No</td></tr>
+                  <tr><td><span class="badge badge-info">Processing</span></td><td>A worker is calling the provider. Retries return here.</td><td>No</td></tr>
+                  <tr><td><span class="badge badge-success">Accepted</span></td><td>The provider accepted the message for delivery.</td><td>Yes</td></tr>
+                  <tr><td><span class="badge badge-danger">Failed</span></td><td>Permanent error or attempts exhausted. Provider error is recorded.</td><td>Yes</td></tr>
+                  <tr><td><span class="badge badge-warning">Expired</span></td><td>Subscription expired, token unregistered or provider TTL elapsed.</td><td>Yes</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="mt-5 rounded-lg border border-warning/30 bg-warning-soft px-3.5 py-3">
+              <p class="flex items-start gap-2 text-[12.5px] leading-relaxed text-sub"><i data-lucide="triangle-alert" class="mt-0.5 size-3.5 shrink-0 text-warning"></i><span><span class="font-semibold text-ink">Accepted is not displayed.</span> Acceptance means the provider queued the message. Browsers, Android and iOS do not reliably confirm display, so Mira never reports &ldquo;delivered&rdquo; or &ldquo;seen&rdquo; unless a provider explicitly exposes that event.</span></p>
+            </div>
+            <p class="mt-4 font-mono text-[12px] text-muted">pending &rarr; queued &rarr; processing &rarr; accepted | failed | expired</p>
+            <p>Retries move a record back to processing without creating a new delivery record or charging quota again.</p>
+          </section>
+
+          <!-- Delivery logs -->
+          <section id="delivery-logs" class="scroll-mt-24" data-doc-section>
+            <h2>Delivery logs</h2>
+            <p>Delivery records are immutable. Each row describes one target device for one notification, including the provider response.</p>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">http</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-deliveries" aria-label="Copy delivery logs request"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-deliveries"><code><span class="token-fn">GET</span> https://api.lazytown.dev/v1/deliveries?notification=ntf_01JCH4K9X2&amp;status=failed&amp;limit=50
+
+<span class="token-com">// 200 OK</span>
+{
+  <span class="token-key">"data"</span>: [
+    {
+      <span class="token-key">"id"</span>: <span class="token-str">"dlv_01JCH5A7"</span>,
+      <span class="token-key">"notification_id"</span>: <span class="token-str">"ntf_01JCH4K9X2"</span>,
+      <span class="token-key">"subscriber_id"</span>: <span class="token-str">"sub_4a81"</span>,
+      <span class="token-key">"platform"</span>: <span class="token-str">"android"</span>,
+      <span class="token-key">"status"</span>: <span class="token-str">"failed"</span>,
+      <span class="token-key">"attempts"</span>: <span class="token-num">3</span>,
+      <span class="token-key">"provider"</span>: <span class="token-str">"fcm"</span>,
+      <span class="token-key">"error_code"</span>: <span class="token-str">"UNREGISTERED"</span>,
+      <span class="token-key">"accepted_at"</span>: <span class="token-key">null</span>,
+      <span class="token-key">"last_attempt_at"</span>: <span class="token-str">"2026-11-10T09:14:02Z"</span>
+    }
+  ],
+  <span class="token-key">"has_more"</span>: <span class="token-key">false</span>,
+  <span class="token-key">"next_cursor"</span>: <span class="token-key">null</span>
+}</code></pre>
+            </div>
+            <p>Filter by <code class="inline-code">notification</code>, <code class="inline-code">subscriber</code>, <code class="inline-code">platform</code>, <code class="inline-code">status</code> or an ISO 8601 <code class="inline-code">from</code>/<code class="inline-code">to</code> range. The dashboard uses the same endpoint as the export.</p>
+          </section>
+
+          <!-- Errors -->
+          <section id="errors" class="scroll-mt-24" data-doc-section>
+            <h2>Errors</h2>
+            <p>Errors use a single JSON envelope. Always branch on <code class="inline-code">error.code</code>, not the human-readable message.</p>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">json</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-error" aria-label="Copy error example"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-error"><code>{
+  <span class="token-key">"error"</span>: {
+    <span class="token-key">"code"</span>: <span class="token-str">"quota_exceeded"</span>,
+    <span class="token-key">"message"</span>: <span class="token-str">"Daily delivery quota exhausted for this project."</span>,
+    <span class="token-key">"details"</span>: {
+      <span class="token-key">"limit"</span>: <span class="token-num">1000</span>,
+      <span class="token-key">"used"</span>: <span class="token-num">988</span>,
+      <span class="token-key">"requested"</span>: <span class="token-num">128</span>,
+      <span class="token-key">"resets_at"</span>: <span class="token-str">"2026-11-11T00:00:00Z"</span>
+    }
+  },
+  <span class="token-key">"request_id"</span>: <span class="token-str">"req_8f31c2"</span>
+}</code></pre>
+            </div>
+
+            <div class="mt-5 overflow-x-auto rounded-lg border border-line">
+              <table>
+                <thead>
+                  <tr><th>HTTP</th><th>Code</th><th>What to do</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td>400</td><td>validation_error</td><td>Read <code class="inline-code">details.fields</code>; do not retry unchanged.</td></tr>
+                  <tr><td>401</td><td>invalid_key</td><td>Check the bearer token, environment and project.</td></tr>
+                  <tr><td>403</td><td>insufficient_scope</td><td>Add the required scope to a new key.</td></tr>
+                  <tr><td>404</td><td>not_found</td><td>Verify the ID belongs to the current project.</td></tr>
+                  <tr><td>409</td><td>idempotency_conflict</td><td>Use a new key or replay the original body.</td></tr>
+                  <tr><td>422</td><td>invalid_target</td><td>Segment or subscriber set is empty or invalid.</td></tr>
+                  <tr><td>429</td><td>quota_exceeded / rate_limited</td><td>Respect <code class="inline-code">Retry-After</code> and <code class="inline-code">resets_at</code>.</td></tr>
+                  <tr><td>500</td><td>internal_error</td><td>Retry with backoff and quote the request ID.</td></tr>
+                  <tr><td>503</td><td>provider_unavailable</td><td>Mira retries automatically; safe to retry a write with the same idempotency key.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- Webhooks -->
+          <section id="webhooks" class="scroll-mt-24" data-doc-section>
+            <h2>Webhooks</h2>
+            <p>Webhooks deliver project events to your HTTPS endpoint. Each request is signed with HMAC-SHA256 so you can verify it originated from Mira. Configure endpoints and rotate secrets in <a class="link" href="app/webhooks.html">Webhooks</a>.</p>
+
+            <h3>Events</h3>
+            <ul>
+              <li><code class="inline-code">subscriber.created</code> / <code class="inline-code">subscriber.expired</code></li>
+              <li><code class="inline-code">notification.queued</code> / <code class="inline-code">notification.accepted</code> / <code class="inline-code">notification.failed</code> / <code class="inline-code">notification.completed</code></li>
+              <li><code class="inline-code">quota.warning</code> &mdash; sent once at 80% of the daily allowance.</li>
+            </ul>
+
+            <h3>Headers</h3>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">http</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-webhook-headers" aria-label="Copy webhook headers"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-webhook-headers"><code><span class="token-fn">Mira-Event</span>: notification.accepted
+<span class="token-fn">Mira-Event-Id</span>: evt_01JCH9
+<span class="token-fn">Mira-Delivery</span>: 1
+<span class="token-fn">Mira-Signature</span>: t=1731234567,v1=5f2c9d…</code></pre>
+            </div>
+
+            <h3>Payload</h3>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">json</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-webhook-payload" aria-label="Copy webhook payload"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-webhook-payload"><code>{
+  <span class="token-key">"id"</span>: <span class="token-str">"evt_01JCH9"</span>,
+  <span class="token-key">"type"</span>: <span class="token-str">"notification.accepted"</span>,
+  <span class="token-key">"created_at"</span>: <span class="token-str">"2026-11-10T09:12:44Z"</span>,
+  <span class="token-key">"project_id"</span>: <span class="token-str">"prj_acme_live"</span>,
+  <span class="token-key">"data"</span>: {
+    <span class="token-key">"notification_id"</span>: <span class="token-str">"ntf_01JCH4K9X2"</span>,
+    <span class="token-key">"delivery_id"</span>: <span class="token-str">"dlv_01JCH5A7"</span>,
+    <span class="token-key">"subscriber_id"</span>: <span class="token-str">"sub_9f2c"</span>,
+    <span class="token-key">"platform"</span>: <span class="token-str">"web"</span>,
+    <span class="token-key">"status"</span>: <span class="token-str">"accepted"</span>,
+    <span class="token-key">"attempts"</span>: <span class="token-num">1</span>
+  }
+}</code></pre>
+            </div>
+
+            <h3>Verify the signature</h3>
+            <p>Compute HMAC-SHA256 over the string <code class="inline-code">timestamp + "." + rawBody</code> using your endpoint secret. Compare in constant time, reject timestamps older than five minutes and deduplicate on <code class="inline-code">Mira-Event-Id</code>. Respond with any <code class="inline-code">2xx</code> within 5 seconds.</p>
+
+            <div x-data="{ tab: 'php' }" class="overflow-hidden rounded-xl border border-line bg-[#0b1220]">
+              <div class="flex items-center justify-between gap-3 border-b border-[#1e2a3f] px-3 py-2">
+                <div class="flex items-center gap-1" role="tablist" aria-label="Signature verification examples">
+                  <button type="button" class="tab-btn !text-[#8ba0bb] hover:!bg-[#16243a] hover:!text-white" role="tab" id="verify-tab-php" aria-controls="verify-panel-php" :aria-selected="tab === 'php'" @click="tab = 'php'">PHP</button>
+                  <button type="button" class="tab-btn !text-[#8ba0bb] hover:!bg-[#16243a] hover:!text-white" role="tab" id="verify-tab-node" aria-controls="verify-panel-node" :aria-selected="tab === 'node'" @click="tab = 'node'">Node.js</button>
+                </div>
+                <span class="font-mono text-[10px] text-[#7c8ba1]">HMAC-SHA256</span>
+              </div>
+              <div class="p-3.5">
+                <div id="verify-panel-php" role="tabpanel" aria-labelledby="verify-tab-php" x-show="tab === 'php'">
+                  <pre class="overflow-x-auto font-mono text-[11px] leading-[1.8] text-[#dbe6f7]"><code><span class="token-key">$raw</span> = file_get_contents(<span class="token-str">'php://input'</span>);
+<span class="token-key">$header</span> = <span class="token-key">$_SERVER</span>[<span class="token-str">'HTTP_MIRA_SIGNATURE'</span>];
+parse_str(str_replace(<span class="token-str">','</span>, <span class="token-str">'&amp;'</span>, <span class="token-key">$header</span>), <span class="token-key">$parts</span>);
+
+<span class="token-key">$expected</span> = hash_hmac(<span class="token-str">'sha256'</span>, <span class="token-key">$parts</span>[<span class="token-str">'t'</span>] . <span class="token-str">'.'</span> . <span class="token-key">$raw</span>, config(<span class="token-str">'services.mira.webhook_secret'</span>));
+
+<span class="token-fn">if</span> (!hash_equals(<span class="token-key">$expected</span>, <span class="token-key">$parts</span>[<span class="token-str">'v1'</span>])) {
+    abort(<span class="token-num">403</span>, <span class="token-str">'Invalid signature'</span>);
+}
+
+<span class="token-key">$event</span> = json_decode(<span class="token-key">$raw</span>, <span class="token-key">true</span>); <span class="token-com">// after verification</span></code></pre>
+                </div>
+                <div id="verify-panel-node" role="tabpanel" aria-labelledby="verify-tab-node" x-show="tab === 'node'" x-cloak>
+                  <pre class="overflow-x-auto font-mono text-[11px] leading-[1.8] text-[#dbe6f7]"><code><span class="token-fn">const</span> crypto = require(<span class="token-str">'node:crypto'</span>);
+
+<span class="token-fn">const</span> raw = req.rawBody; <span class="token-com">// Buffer, before JSON.parse</span>
+<span class="token-fn">const</span> signature = req.get(<span class="token-str">'Mira-Signature'</span>);
+<span class="token-fn">const</span> parts = Object.fromEntries(signature.split(<span class="token-str">','</span>).map((p) =&gt; p.split(<span class="token-str">'='</span>)));
+<span class="token-fn">const</span> expected = crypto
+  .createHmac(<span class="token-str">'sha256'</span>, process.env.MIRA_WEBHOOK_SECRET)
+  .update(parts.t + <span class="token-str">'.'</span> + raw)
+  .digest(<span class="token-str">'hex'</span>);
+
+<span class="token-fn">if</span> (!crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(parts.v1))) {
+  <span class="token-fn">return</span> res.status(<span class="token-num">403</span>).send(<span class="token-str">'Invalid signature'</span>);
+}</code></pre>
+                </div>
+              </div>
+            </div>
+
+            <h3>Retries</h3>
+            <p>Non-2xx responses, timeouts over 5 seconds and connection errors are retried on a dedicated queue with exponential backoff. Endpoints returning repeated failures are flagged in the dashboard but stay active until you disable or delete them.</p>
+          </section>
+
+          <!-- Quotas -->
+          <section id="quotas" class="scroll-mt-24" data-doc-section>
+            <h2>Quotas &amp; rate limits</h2>
+            <p>Free projects receive <strong>1,000 delivery units per day</strong>, per project, resetting at 00:00 UTC. One notification to one subscriber consumes one unit; sending to 100 devices reserves 100 units.</p>
+
+            <h3>Reservation rules</h3>
+            <ul>
+              <li>Units are reserved atomically inside a transaction before any job is queued. Concurrent requests cannot overspend the allowance.</li>
+              <li>Retries and provider failover reuse the original reservation and never charge twice.</li>
+              <li>Units for targets that are never handed to a provider are returned to the daily balance.</li>
+              <li>Invalid tokens marked expired do not consume future quota.</li>
+            </ul>
+
+            <h3>Rate limits</h3>
+            <p>Requests are limited per key. When a limit is exceeded the response is <code class="inline-code">429 rate_limited</code> with:</p>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">response headers</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-ratelimit" aria-label="Copy rate limit headers"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-ratelimit"><code><span class="token-fn">X-RateLimit-Limit</span>: 120
+<span class="token-fn">X-RateLimit-Remaining</span>: 0
+<span class="token-fn">X-RateLimit-Reset</span>: 1731234600
+<span class="token-fn">Retry-After</span>: 30</code></pre>
+            </div>
+            <p>Read remaining quota at <code class="inline-code">GET /v1/usage</code>. Subscribe to <code class="inline-code">quota.warning</code> to be notified at 80% of the daily allowance.</p>
+          </section>
+
+          <!-- Pagination -->
+          <section id="pagination" class="scroll-mt-24" data-doc-section>
+            <h2>Pagination</h2>
+            <p>List endpoints use cursor pagination. Pass <code class="inline-code">limit</code> (1&ndash;100, default 25) and the <code class="inline-code">starting_after</code> cursor from the previous response.</p>
+            <div class="code-block">
+              <div class="flex items-center justify-between border-b border-[#1e2a3f] px-3.5 py-2">
+                <span class="font-mono text-[10.5px] text-[#8ba0bb]">json</span>
+                <button type="button" class="inline-flex h-7 w-7 items-center justify-center rounded-md text-[#8ba0bb] transition hover:bg-[#16243a] hover:text-white" data-copy-target="#code-pagination" aria-label="Copy pagination example"><i data-lucide="copy" class="size-3.5"></i></button>
+              </div>
+              <pre id="code-pagination"><code>{
+  <span class="token-key">"data"</span>: [ <span class="token-com">/* … */</span> ],
+  <span class="token-key">"has_more"</span>: <span class="token-key">true</span>,
+  <span class="token-key">"next_cursor"</span>: <span class="token-str">"cur_01JCH7Q2"</span>
+}</code></pre>
+            </div>
+            <p>Treat cursors as opaque strings. Totals are approximate and only returned for small collections; never paginate by page number.</p>
+          </section>
+
+          <!-- Versioning -->
+          <section id="versioning" class="scroll-mt-24" data-doc-section>
+            <h2>Versioning</h2>
+            <p>The API version is part of the URL (<code class="inline-code">/v1</code>). Additive changes &mdash; new fields, new enum values, new optional parameters &mdash; may ship without a version bump. Clients must ignore unknown fields and handle unknown enum values gracefully.</p>
+            <p>Breaking changes ship under a new path version with at least 12 months of overlap. Deprecated endpoints return a <code class="inline-code">Deprecation</code> header and a <code class="inline-code">Sunset</code> date.</p>
+            <div class="mt-6 rounded-xl border border-line bg-surface p-4">
+              <p class="flex items-start gap-2.5 text-[12px] leading-relaxed text-sub"><i data-lucide="life-buoy" class="mt-0.5 size-4 shrink-0 text-muted"></i><span><span class="font-medium text-ink">Need help?</span> Include the <code class="inline-code">request_id</code> from any failing response when contacting support.</span></p>
+            </div>
+          </section>
+        </article>
+
+        <div class="mt-12 flex flex-col gap-3 border-t border-line pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-[12px] text-muted">Mira API v1 &middot; Last updated November 2026</p>
+          <div class="flex gap-2">
+            <a href="index.html#pricing" class="btn btn-ghost btn-sm">Pricing</a>
+            <a href="status.html" class="btn btn-secondary btn-sm">Service status</a>
+            <a href="app/index.html" class="btn btn-primary btn-sm">Open dashboard<i data-lucide="arrow-right" class="size-3.5"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- On this page -->
+    <aside class="hidden w-[168px] shrink-0 xl:block">
+      <div class="sticky top-24">
+        <p class="text-[10px] font-semibold uppercase tracking-[0.11em] text-muted">On this page</p>
+        <nav id="docs-toc" class="mt-3 border-l border-line" aria-label="On this page"></nav>
+      </div>
+    </aside>
+  </div>
+</main>
+
+<footer class="border-t border-line bg-surface">
+  <div class="container-page flex flex-col gap-3 py-5 text-[11px] text-muted sm:flex-row sm:items-center sm:justify-between">
+    <p>&copy; <span class="js-year">2026</span> LazyTown. Mira is push notification infrastructure.</p>
+    <div class="flex flex-wrap gap-4">
+      <a href="index.html" class="hover:text-ink">Home</a>
+      <a href="index.html#pricing" class="hover:text-ink">Pricing</a>
+      <a href="status.html" class="hover:text-ink">Status</a>
+      <a href="login.html" class="hover:text-ink">Sign in</a>
+    </div>
+  </div>
+</footer>
+
+<!-- @include partials/site-scripts.html -->
+<script src="%BASE%assets/js/docs.js"></script>
+</body>
+</html>

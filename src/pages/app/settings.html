@@ -1,0 +1,287 @@
+<!-- @title Settings · Mira -->
+<!-- @desc Profile, security, appearance and project preferences. -->
+<!-- @include partials/head.html -->
+<body class="bg-canvas" data-page="settings" data-title="Settings">
+<!-- @include partials/sprite.html -->
+<!-- @include partials/sidebar.html -->
+
+<div class="flex min-h-screen flex-col lg:pl-[264px]">
+  <!-- @include partials/topbar.html -->
+
+  <main id="main" class="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+    <div class="mx-auto w-full max-w-page">
+      <div class="page-header">
+        <div>
+          <h1 class="text-[24px] font-semibold leading-tight tracking-[-0.03em]">Settings</h1>
+          <p class="mt-1.5 text-[13.5px] text-muted">Manage your profile, security and dashboard preferences.</p>
+        </div>
+      </div>
+
+      <div class="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[190px_1fr]">
+        <nav class="lg:sticky lg:top-[88px] lg:self-start" aria-label="Settings sections">
+          <div class="flex gap-1 overflow-x-auto pb-1 lg:flex-col">
+            <a href="#profile" class="nav-link whitespace-nowrap lg:bg-sunken lg:text-ink">Profile</a>
+            <a href="#security" class="nav-link whitespace-nowrap">Security</a>
+            <a href="#appearance" class="nav-link whitespace-nowrap">Appearance</a>
+            <a href="#notifications" class="nav-link whitespace-nowrap">Notifications</a>
+            <a href="#danger" class="nav-link whitespace-nowrap">Danger zone</a>
+          </div>
+        </nav>
+
+        <div class="min-w-0 max-w-3xl space-y-5">
+          <!-- Profile -->
+          <section id="profile" class="card scroll-mt-24" aria-labelledby="profile-title">
+            <div class="card-header">
+              <div>
+                <h2 id="profile-title" class="card-title">Profile</h2>
+                <p class="card-sub">Your account details across all projects</p>
+              </div>
+            </div>
+            <form id="profile-form" class="card-body space-y-4" novalidate>
+              <div class="flex items-center gap-4">
+                <span class="grid size-14 place-items-center rounded-full bg-ink text-[17px] font-semibold text-canvas">KS</span>
+                <div>
+                  <p class="text-[13px] font-medium text-ink">Profile photo</p>
+                  <p class="mt-0.5 text-[11.5px] text-muted">Initials are used until you upload an image.</p>
+                  <button type="button" class="btn btn-secondary btn-sm mt-2" id="change-avatar">Upload photo</button>
+                </div>
+              </div>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label class="label" for="profile-name">Full name</label>
+                  <input class="input" id="profile-name" name="name" type="text" value="Kabir Sharma">
+                </div>
+                <div>
+                  <label class="label" for="profile-email">Email address</label>
+                  <input class="input" id="profile-email" name="email" type="email" value="kabir@acme.dev">
+                </div>
+              </div>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label class="label" for="profile-timezone">Timezone</label>
+                  <select class="select" id="profile-timezone">
+                    <option>UTC (Coordinated Universal Time)</option>
+                    <option selected>Asia/Kolkata (IST, UTC+5:30)</option>
+                    <option>Europe/London (GMT, UTC+0)</option>
+                    <option>America/New_York (EST, UTC-5)</option>
+                  </select>
+                  <p class="hint">Used for dashboard timestamps and daily quota resets.</p>
+                </div>
+                <div>
+                  <label class="label" for="profile-role">Role</label>
+                  <input class="input" id="profile-role" type="text" value="Owner" disabled>
+                  <p class="hint">Ownership transfer is available from the project menu.</p>
+                </div>
+              </div>
+              <div class="flex justify-end gap-2 border-t border-line pt-4">
+                <button type="reset" class="btn btn-ghost btn-sm">Discard</button>
+                <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Security -->
+          <section id="security" class="card scroll-mt-24" aria-labelledby="security-title">
+            <div class="card-header">
+              <div>
+                <h2 id="security-title" class="card-title">Security</h2>
+                <p class="card-sub">Password, two-factor authentication and sessions</p>
+              </div>
+            </div>
+            <div class="card-body space-y-6">
+              <form id="password-form" class="space-y-4" novalidate>
+                <div>
+                  <label class="label" for="current-password">Current password</label>
+                  <input class="input" id="current-password" type="password" autocomplete="current-password">
+                </div>
+                <div class="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label class="label" for="new-password">New password</label>
+                    <input class="input" id="new-password" type="password" autocomplete="new-password">
+                    <p class="hint">At least 12 characters, mixed case and a number.</p>
+                  </div>
+                  <div>
+                    <label class="label" for="confirm-password">Confirm new password</label>
+                    <input class="input" id="confirm-password" type="password" autocomplete="new-password">
+                  </div>
+                </div>
+                <div class="flex justify-end"><button type="submit" class="btn btn-secondary btn-sm">Update password</button></div>
+              </form>
+
+              <div class="divider"></div>
+
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p class="flex items-center gap-2 text-[13px] font-medium text-ink">Two-factor authentication <span class="badge badge-neutral">Optional</span></p>
+                  <p class="mt-1 text-[11.5px] leading-relaxed text-muted">Require a time-based code from an authenticator app when signing in.</p>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm shrink-0" id="enable-2fa">Enable 2FA</button>
+              </div>
+
+              <div class="divider"></div>
+
+              <div>
+                <p class="text-[13px] font-medium text-ink">Active sessions</p>
+                <p class="mt-1 text-[11.5px] text-muted">Mira revokes sessions when a password changes.</p>
+                <div class="mt-3 divide-y divide-line rounded-lg border border-line">
+                  <div class="flex items-center justify-between gap-3 p-3">
+                    <div class="flex items-center gap-2.5">
+                      <i data-lucide="monitor" class="size-4 text-muted"></i>
+                      <div><p class="text-[12px] font-medium text-ink">Chrome 131 &middot; Windows 11</p><p class="text-[10.5px] text-muted">Current session &middot; Kolkata, IN</p></div>
+                    </div>
+                    <span class="badge badge-success">Current</span>
+                  </div>
+                  <div class="flex items-center justify-between gap-3 p-3">
+                    <div class="flex items-center gap-2.5">
+                      <i data-lucide="smartphone" class="size-4 text-muted"></i>
+                      <div><p class="text-[12px] font-medium text-ink">Safari 18 &middot; iPhone 16 Pro</p><p class="text-[10.5px] text-muted">2 days ago &middot; Mumbai, IN</p></div>
+                    </div>
+                    <button type="button" class="btn btn-ghost btn-sm !text-danger" data-revoke-session>Revoke</button>
+                  </div>
+                  <div class="flex items-center justify-between gap-3 p-3">
+                    <div class="flex items-center gap-2.5">
+                      <i data-lucide="laptop" class="size-4 text-muted"></i>
+                      <div><p class="text-[12px] font-medium text-ink">Firefox 133 &middot; Ubuntu 24.04</p><p class="text-[10.5px] text-muted">8 days ago &middot; Frankfurt, DE</p></div>
+                    </div>
+                    <button type="button" class="btn btn-ghost btn-sm !text-danger" data-revoke-session>Revoke</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Appearance -->
+          <section id="appearance" class="card scroll-mt-24" aria-labelledby="appearance-title">
+            <div class="card-header">
+              <div>
+                <h2 id="appearance-title" class="card-title">Appearance</h2>
+                <p class="card-sub">Light is the default. Preference is saved on this device.</p>
+              </div>
+            </div>
+            <div class="card-body space-y-5">
+              <fieldset>
+                <legend class="label">Theme</legend>
+                <div class="grid grid-cols-3 gap-2.5">
+                  <button type="button" class="group rounded-lg border border-line p-2 text-left transition hover:border-line-strong" data-theme-choice="light" aria-pressed="false">
+                    <span class="block h-16 rounded-md border border-line bg-[#f6f8fc] p-1.5"><span class="block h-2 w-8 rounded-sm bg-[#e2e8f0]"></span><span class="mt-1.5 block h-8 rounded-sm bg-white ring-1 ring-[#e2e8f0]"></span></span>
+                    <span class="mt-2 flex items-center justify-between px-0.5 text-[11.5px] font-medium text-sub">Light<i data-lucide="check" class="size-3.5 text-link" data-theme-check="light"></i></span>
+                  </button>
+                  <button type="button" class="group rounded-lg border border-line p-2 text-left transition hover:border-line-strong" data-theme-choice="dark" aria-pressed="false">
+                    <span class="block h-16 rounded-md border border-[#1f2b3f] bg-[#080d17] p-1.5"><span class="block h-2 w-8 rounded-sm bg-[#1f2b3f]"></span><span class="mt-1.5 block h-8 rounded-sm bg-[#0f172a] ring-1 ring-[#1f2b3f]"></span></span>
+                    <span class="mt-2 flex items-center justify-between px-0.5 text-[11.5px] font-medium text-sub">Dark<i data-lucide="check" class="size-3.5 text-link" data-theme-check="dark"></i></span>
+                  </button>
+                  <button type="button" class="group rounded-lg border border-line p-2 text-left transition hover:border-line-strong" data-theme-choice="system" aria-pressed="false">
+                    <span class="flex h-16 overflow-hidden rounded-md border border-line"><span class="w-1/2 bg-[#f6f8fc] p-1.5"><span class="block h-2 w-4 rounded-sm bg-[#e2e8f0]"></span><span class="mt-1.5 block h-8 rounded-sm bg-white ring-1 ring-[#e2e8f0]"></span></span><span class="w-1/2 bg-[#080d17] p-1.5"><span class="block h-2 w-4 rounded-sm bg-[#1f2b3f]"></span><span class="mt-1.5 block h-8 rounded-sm bg-[#0f172a] ring-1 ring-[#1f2b3f]"></span></span></span>
+                    <span class="mt-2 flex items-center justify-between px-0.5 text-[11.5px] font-medium text-sub">System<i data-lucide="check" class="size-3.5 text-link" data-theme-check="system"></i></span>
+                  </button>
+                </div>
+              </fieldset>
+
+              <div class="divider"></div>
+
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <p class="text-[13px] font-medium text-ink">Reduce motion</p>
+                  <p class="mt-0.5 text-[11.5px] text-muted">Disable non-essential transitions and chart animation.</p>
+                </div>
+                <button type="button" class="switch" role="switch" aria-checked="false" id="reduce-motion-toggle" aria-label="Reduce motion"><span class="sr-only">Reduce motion</span></button>
+              </div>
+
+              <div class="flex items-center justify-between gap-4">
+                <div>
+                  <p class="text-[13px] font-medium text-ink">Compact tables</p>
+                  <p class="mt-0.5 text-[11.5px] text-muted">Show more rows per page in delivery logs.</p>
+                </div>
+                <button type="button" class="switch" role="switch" aria-checked="false" aria-label="Compact tables"><span class="sr-only">Compact tables</span></button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Notifications -->
+          <section id="notifications" class="card scroll-mt-24" aria-labelledby="notifications-title">
+            <div class="card-header">
+              <div>
+                <h2 id="notifications-title" class="card-title">Email notifications</h2>
+                <p class="card-sub">Operational alerts sent to kabir@acme.dev</p>
+              </div>
+            </div>
+            <div class="card-body divide-y divide-line !py-0">
+              <div class="flex items-center justify-between gap-4 py-4">
+                <div><p class="text-[13px] font-medium text-ink">Delivery failures</p><p class="mt-0.5 text-[11.5px] text-muted">Alert when a notification exceeds a 5% failure rate.</p></div>
+                <button type="button" class="switch" role="switch" aria-checked="true" aria-label="Delivery failure emails"><span class="sr-only">Delivery failure emails</span></button>
+              </div>
+              <div class="flex items-center justify-between gap-4 py-4">
+                <div><p class="text-[13px] font-medium text-ink">Quota warnings</p><p class="mt-0.5 text-[11.5px] text-muted">Alert at 80% and 100% of the daily allowance.</p></div>
+                <button type="button" class="switch" role="switch" aria-checked="true" aria-label="Quota warning emails"><span class="sr-only">Quota warning emails</span></button>
+              </div>
+              <div class="flex items-center justify-between gap-4 py-4">
+                <div><p class="text-[13px] font-medium text-ink">Weekly summary</p><p class="mt-0.5 text-[11.5px] text-muted">Delivery performance and subscriber growth each Monday.</p></div>
+                <button type="button" class="switch" role="switch" aria-checked="true" aria-label="Weekly summary emails"><span class="sr-only">Weekly summary emails</span></button>
+              </div>
+              <div class="flex items-center justify-between gap-4 py-4">
+                <div><p class="text-[13px] font-medium text-ink">Product updates</p><p class="mt-0.5 text-[11.5px] text-muted">New features, API changes and maintenance notices.</p></div>
+                <button type="button" class="switch" role="switch" aria-checked="false" aria-label="Product update emails"><span class="sr-only">Product update emails</span></button>
+              </div>
+            </div>
+          </section>
+
+          <!-- Danger zone -->
+          <section id="danger" class="card scroll-mt-24 border-danger/30" aria-labelledby="danger-title">
+            <div class="card-header border-danger/20">
+              <div>
+                <h2 id="danger-title" class="card-title">Danger zone</h2>
+                <p class="card-sub">Irreversible actions for your account</p>
+              </div>
+            </div>
+            <div class="card-body flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p class="text-[13px] font-medium text-ink">Delete account</p>
+                <p class="mt-1 max-w-md text-[11.5px] leading-relaxed text-muted">Permanently delete your account, projects, subscribers, API keys and delivery logs. This cannot be undone.</p>
+              </div>
+              <button type="button" class="btn btn-danger btn-sm shrink-0" id="delete-account">Delete account</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- 2FA -->
+<dialog id="twofactor-dialog" class="modal max-w-md" aria-labelledby="twofactor-title">
+  <form id="twofactor-form" novalidate>
+    <div class="modal-header">
+      <div>
+        <h2 id="twofactor-title" class="text-[16px] font-semibold tracking-[-0.02em]">Enable two-factor authentication</h2>
+        <p class="mt-0.5 text-[12.5px] text-muted">Scan the secret in your authenticator app, then confirm a code.</p>
+      </div>
+      <button type="button" class="btn btn-ghost btn-icon !size-8" data-dialog-close aria-label="Close dialog"><i data-lucide="x" class="size-4"></i></button>
+    </div>
+    <div class="modal-body space-y-4">
+      <div>
+        <p class="mb-1.5 text-[10.5px] font-semibold uppercase tracking-[0.1em] text-muted">Setup key</p>
+        <div class="flex items-stretch gap-2">
+          <code id="twofactor-secret" class="flex-1 break-all rounded-lg border border-line bg-sunken px-3 py-2.5 font-mono text-[12px] text-ink">JBSWY3DPEHPK3PXP</code>
+          <button type="button" class="btn btn-secondary btn-sm shrink-0" data-copy-target="#twofactor-secret"><i data-lucide="copy" class="size-3.5"></i>Copy</button>
+        </div>
+        <p class="hint">Mira uses TOTP (SHA-1, 30-second window, 6 digits).</p>
+      </div>
+      <div>
+        <label class="label" for="twofactor-code">6-digit code</label>
+        <input class="input text-center font-mono text-[17px] tracking-[0.35em]" id="twofactor-code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="000000" data-autofocus>
+        <p class="error-text hidden" data-error-for="twofactor-code"><i data-lucide="alert-circle" class="size-3.5 shrink-0"></i>Enter the 6-digit code from your app.</p>
+      </div>
+      <div class="rounded-lg border border-line bg-sunken/60 p-3">
+        <p class="flex items-start gap-2 text-[11.5px] leading-relaxed text-sub"><i data-lucide="info" class="mt-0.5 size-3.5 shrink-0 text-muted"></i>Frontend preview: any 6 digits will enable the demo state. Recovery codes are generated server-side.</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary btn-sm" data-dialog-close>Cancel</button>
+      <button type="submit" class="btn btn-primary btn-sm">Verify &amp; enable</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- @include partials/app-scripts.html -->
+</body>
+</html>

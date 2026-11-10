@@ -1,0 +1,95 @@
+<div id="sidebar-overlay" class="fixed inset-0 z-40 hidden bg-[#030712]/55 lg:hidden" data-sidebar-close></div>
+
+<aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex w-[264px] -translate-x-full flex-col border-r border-line bg-surface transition-transform duration-200 ease-out lg:translate-x-0" aria-label="Main navigation">
+  <div class="flex h-16 items-center gap-2 px-4">
+    <a href="%BASE%app/index.html" class="flex items-center gap-2.5 rounded-lg" aria-label="Mira dashboard home">
+      <span class="brand-mark size-8">
+        <svg class="size-5" aria-hidden="true"><use href="#mira-mark"/></svg>
+      </span>
+      <span class="text-[18px] font-bold leading-none tracking-[-0.045em] text-ink">mira</span>
+    </a>
+    <span class="ml-1 hidden rounded border border-line px-1.5 py-0.5 font-mono text-[9.5px] font-medium uppercase tracking-wider text-muted sm:inline">v1</span>
+    <button type="button" class="btn btn-ghost btn-icon ml-auto lg:hidden" data-sidebar-close aria-label="Close navigation">
+      <i data-lucide="x" class="size-5"></i>
+    </button>
+  </div>
+
+  <!-- Project switcher -->
+  <div class="px-3" x-data="{
+      open: false,
+      project: Mira.activeProject(),
+      init() { window.addEventListener('mira:project', (e) => { this.project = e.detail; }); }
+    }" @click.outside="open = false" @keydown.escape.prevent="open = false">
+    <div class="relative">
+      <button type="button" class="flex w-full items-center gap-2.5 rounded-lg border border-line bg-surface px-2.5 py-2 text-left transition hover:border-line-strong hover:bg-sunken" @click="open = !open" :aria-expanded="open" aria-haspopup="listbox">
+        <span class="grid size-7 shrink-0 place-items-center rounded-md bg-primary-soft font-mono text-[10.5px] font-semibold text-link" x-text="project.initials"></span>
+        <span class="min-w-0 flex-1">
+          <span class="block truncate text-[13px] font-semibold leading-tight text-ink" x-text="project.name"></span>
+          <span class="mt-1 flex items-center gap-1.5 text-[10.5px] leading-none text-muted">
+            <span class="dot" :class="project.env === 'live' ? 'text-success' : 'text-warning'"></span>
+            <span class="font-mono" x-text="project.env"></span>
+            <span class="text-line-strong">&middot;</span>
+            <span x-text="project.plan"></span>
+          </span>
+        </span>
+        <i data-lucide="chevrons-up-down" class="size-3.5 shrink-0 text-muted"></i>
+      </button>
+      <div x-show="open" x-cloak x-transition.opacity.duration.120ms class="menu absolute left-0 right-0 top-[calc(100%+6px)] !min-w-0" role="listbox" aria-label="Switch project">
+        <p class="px-2.5 pb-1 pt-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-muted">Projects</p>
+        <template x-for="p in Mira.projects" :key="p.id">
+          <button type="button" class="menu-item" role="option" :aria-selected="p.id === project.id" @click="Mira.setProject(p.id); open = false">
+            <span class="grid size-5 shrink-0 place-items-center rounded bg-sunken font-mono text-[9px] font-semibold" x-text="p.initials"></span>
+            <span class="min-w-0 flex-1 truncate" x-text="p.name"></span>
+            <span class="dot" :class="p.env === 'live' ? 'text-success' : 'text-warning'"></span>
+          </button>
+        </template>
+        <div class="menu-sep"></div>
+        <a class="menu-item" href="%BASE%app/projects.html"><i data-lucide="settings-2"></i>Manage projects</a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="mt-2 flex-1 overflow-y-auto px-3 pb-4">
+    <p class="sidebar-label">Workspace</p>
+    <div class="space-y-0.5">
+      <a class="sidebar-link" data-nav="overview" href="%BASE%app/index.html"><i data-lucide="layout-dashboard"></i>Overview</a>
+      <a class="sidebar-link" data-nav="projects" href="%BASE%app/projects.html"><i data-lucide="folder-kanban"></i>Projects</a>
+      <a class="sidebar-link" data-nav="subscribers" href="%BASE%app/subscribers.html"><i data-lucide="users"></i>Subscribers<span class="nav-count">24.3k</span></a>
+      <a class="sidebar-link" data-nav="notifications" href="%BASE%app/notifications.html"><i data-lucide="bell"></i>Notifications</a>
+      <a class="sidebar-link" data-nav="deliveries" href="%BASE%app/deliveries.html"><i data-lucide="list-checks"></i>Delivery logs</a>
+      <a class="sidebar-link" data-nav="analytics" href="%BASE%app/analytics.html"><i data-lucide="chart-no-axes-combined"></i>Analytics</a>
+    </div>
+
+    <p class="sidebar-label">Developer</p>
+    <div class="space-y-0.5">
+      <a class="sidebar-link" data-nav="api-keys" href="%BASE%app/api-keys.html"><i data-lucide="key-round"></i>API keys</a>
+      <a class="sidebar-link" data-nav="webhooks" href="%BASE%app/webhooks.html"><i data-lucide="webhook"></i>Webhooks</a>
+      <a class="sidebar-link" data-nav="usage" href="%BASE%app/usage.html"><i data-lucide="gauge"></i>Usage &amp; billing</a>
+    </div>
+
+    <p class="sidebar-label">Account</p>
+    <div class="space-y-0.5">
+      <a class="sidebar-link" data-nav="docs" href="%BASE%docs.html"><i data-lucide="book-open"></i>Documentation<i data-lucide="arrow-up-right" class="ml-auto !size-3.5"></i></a>
+      <a class="sidebar-link" data-nav="settings" href="%BASE%app/settings.html"><i data-lucide="settings"></i>Settings</a>
+    </div>
+  </nav>
+
+  <div class="border-t border-line p-3">
+    <div class="rounded-lg border border-line bg-sunken/60 p-3">
+      <div class="flex items-center justify-between gap-2">
+        <span class="text-[11.5px] font-medium text-sub">Daily quota</span>
+        <span class="font-mono text-[10.5px] text-muted"><span class="js-quota-used">812</span> / <span class="js-quota-limit">1,000</span></span>
+      </div>
+      <div class="mt-2 h-1.5 overflow-hidden rounded-full bg-line" role="progressbar" aria-label="Daily delivery quota used" aria-valuemin="0" aria-valuemax="100" aria-valuenow="81" id="sidebar-quota-bar">
+        <div class="js-quota-fill h-full rounded-full bg-warning" style="width: 81%"></div>
+      </div>
+      <a href="%BASE%app/usage.html" class="mt-2.5 flex items-center gap-1 text-[11.5px] font-medium text-link hover:underline">
+        <span class="js-quota-percent">81</span>% used today <span aria-hidden="true">&middot;</span> View usage
+      </a>
+    </div>
+    <p class="mt-3 flex items-center justify-between px-0.5 text-[10.5px] text-muted">
+      <span>&copy; 2026 LazyTown</span>
+      <a href="%BASE%status.html" class="inline-flex items-center gap-1.5 hover:text-ink"><span class="dot text-success"></span>All systems</a>
+    </p>
+  </div>
+</aside>
