@@ -40,7 +40,8 @@
 
   function moveFocus(fieldId) {
     if (!fieldId) return;
-    const el = document.getElementById(fieldId) || $(ERROR_FOCUS[fieldId] || '');
+    const selector = ERROR_FOCUS[fieldId];
+    const el = document.getElementById(fieldId) || (selector ? $(selector) : null);
     if (!el) return;
     el.focus();
   }
@@ -269,7 +270,9 @@
       $$('[data-sort]', this.table).forEach((btn) => {
         const active = btn.dataset.sort === this.sortKey;
         btn.dataset.direction = active ? this.sortDir : '';
-        btn.setAttribute('aria-sort', active ? (this.sortDir === 'asc' ? 'ascending' : 'descending') : 'none');
+        btn.removeAttribute('aria-sort');
+        const th = btn.closest('th');
+        if (th) th.setAttribute('aria-sort', active ? (this.sortDir === 'asc' ? 'ascending' : 'descending') : 'none');
       });
 
       icons();

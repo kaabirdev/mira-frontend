@@ -422,7 +422,7 @@
       <!-- Quick start -->
       <section class="card overflow-hidden" aria-labelledby="quickstart-title">
         <div class="grid lg:grid-cols-[0.9fr_1.1fr]">
-          <div class="p-5 sm:p-6">
+          <div class="min-w-0 p-5 sm:p-6">
             <p class="text-[10.5px] font-semibold uppercase tracking-[0.12em] text-muted">Quick start</p>
             <h2 id="quickstart-title" class="mt-2 text-[19px] tracking-[-0.025em]">Send your first notification</h2>
             <p class="mt-1.5 max-w-md text-[13px] leading-relaxed text-sub">One REST call fans out to every subscriber. Mira queues each delivery, retries failures and records the provider response.</p>
@@ -436,7 +436,7 @@
               <a href="api-keys.html" class="btn btn-ghost btn-sm">Manage API keys<i data-lucide="arrow-right" class="size-3.5"></i></a>
             </div>
           </div>
-          <div class="border-t border-[#1e2a3f] bg-[#0b1220] p-5 lg:border-l lg:border-t-0">
+          <div class="min-w-0 border-t border-[#1e2a3f] bg-[#0b1220] p-5 lg:border-l lg:border-t-0">
             <div class="flex items-center justify-between gap-3">
               <div class="flex items-center gap-2 text-[11px] text-[#8ba0bb]">
                 <span class="rounded bg-[#16243a] px-1.5 py-0.5 font-mono text-[10px] text-[#93c5fd]">POST</span>
@@ -456,7 +456,7 @@
     "url": "https://acme.dev/changelog",
     "target": { "type": "segment", "id": "seg_active_web" }
   }'</span></code></pre>
-            <p class="mt-3 flex items-center gap-1.5 text-[10.5px] text-[#7c8ba1]"><i data-lucide="shield-check" class="size-3"></i>Secret keys are hashed with HMAC-SHA256 and never stored in plaintext.</p>
+            <p class="mt-3 flex items-center gap-1.5 text-[10.5px] text-[#7c8ba1]"><i data-lucide="shield-check" class="size-3"></i><span>Secret keys are hashed with HMAC-SHA256 and never stored in plaintext.</span></p>
           </div>
         </div>
       </section>
